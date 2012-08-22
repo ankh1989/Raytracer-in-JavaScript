@@ -18,8 +18,9 @@ texture.checker = function(options)
 	{				
 		var sum = 0
 		
-		for (var i = 0; i < vec.dim; i++)
-			sum += Math.floor(s[i]*(0.123 + at[i]))
+		sum += Math.floor(s[0]*(0.123 + at[0]))
+		sum += Math.floor(s[1]*(0.123 + at[1]))
+		sum += Math.floor(s[2]*(0.123 + at[2]))
 			
 		return sum % 2 == 0 ? c : ic
 	}

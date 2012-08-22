@@ -12,12 +12,12 @@ sphere.prototype.norm = function(at)
 {	
 	var ir = this.ir
 	var c = this.c
-	var n = new Array(c.length)
 	
-	for (var i = 0; i < c.length; i++)
-		n[i] = ir * (at[i] - c[i])
-		
-	return n	
+	return [
+		ir * (at[0] - c[0]),
+		ir * (at[1] - c[1]),
+		ir * (at[2] - c[2])
+	]	
 }
 
 sphere.prototype.trace = function(ray)
@@ -45,10 +45,11 @@ sphere.prototype.trace = function(ray)
 	if (t < math.eps)
 		return
 			
-	var p = new Array(a.length)
-	
-	for (var i = 0; i < a.length; i++)
-		p[i] = a[i] + t * s[i]	
+	var p = [
+		a[0] + t * s[0],
+		a[1] + t * s[1],
+		a[2] + t * s[2]
+	]
 	
 	return {at:p, dist:t}
 }
