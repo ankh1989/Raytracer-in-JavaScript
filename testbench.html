@@ -33,7 +33,7 @@ Here is HTML5 Canvas element. If you see this, your browser does not support HTM
 
 <div class="cp">
 <input id="render" type="button" value="Render"/>
-<input id="aarays" type="text" value="3" size="5" title="Rays per pixel"/>
+<input id="aarays" type="text" value="10" size="5" title="Rays per pixel"/>
 <input id="imgsize" type="text" value="N/A" size="5" title="Image size"/>
 <input id="image" type="button" value="Copy"/>
 <input id="adjust" type="button" onclick="map.adjustbrightness()" value="Adjust"/>
@@ -212,7 +212,7 @@ map.renderarea = function(xrange, yrange)
 						
 		map.pixels[y * width + x] = vec.clone(color)
 		
-		for (var i in color)
+		for (var i = 0, len = color.length; i < len; i++)
 		{
 			var ci = color[i]			
 			
@@ -295,7 +295,7 @@ map.adjustbrightness = function()
 		return f * cc
 	}
 	
-	for (var i in map.pixels)
+	for (var i = 0, len = map.pixels.length; i < len; i++)
 	{
 		var color = map.pixels[i]
 				
@@ -327,7 +327,7 @@ map.createcamera = function(opts)
 	
 	z = z.slice(0, vec.dim - 2)
 	
-	for (var i in z)
+	for (var i = 0, len = z.length; i < len; i++)
 		z[i] = vec.norm(z[i])	
 	
 	var s = vec.norm(vec.sub(opts.to, opts.from))	
@@ -377,7 +377,7 @@ function makescene()
 	
 	var c = vec.$(0.5, 0.5 / s3, 0.25 * s2 / s3)
 	
-	for (var i in t)
+	for (var i = 0, len = t.length; i < len; i++)
 		t[i] = vec.sub(t[i], c)
 		
 	var sm = mat.create({refl:0.6})
@@ -418,9 +418,6 @@ function makescene2()
 
 function initialize()
 {
-	vec.dim = 3	
-	vec.optimise()
-
 	map.camera = map.createcamera
 	({
 		from: vec.$(3.8, 4.4, 3.5),		
@@ -432,10 +429,10 @@ function initialize()
 	makescene2()
 	
 	map.canvas = $('canvas')
-	map.setsize(800)
+	map.setsize(600)
 	map.clear()
 	
-	$('imgsize').value = 800	
+	$('imgsize').value = 600	
 }
 
 $('canvas').onclick = function(event)

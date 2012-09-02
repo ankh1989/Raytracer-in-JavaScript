@@ -18,7 +18,7 @@ rt.trace = function(ray, min, objects)
 
 	var p	
 
-	for (var i in objects)
+	for (var i = 0, len = objects.length; i < len; i++)
 	{		
 		var obj = objects[i]
 		var ep = obj.trace(ray)
@@ -55,12 +55,11 @@ rt.color = function(r)
 	var refl = m.reflection
 	var refr = m.transparency
 	
-	var col = new Array(3)
-		
-	for (var i = 0; i < 3; i++)
-		col[i] = surf * surfcol[i] + refl * reflcol[i] + refr * refrcol[i]
-	
-	return col
+	return [
+		surf * surfcol[0] + refl * reflcol[0] + refr * refrcol[0],
+		surf * surfcol[1] + refl * reflcol[1] + refr * refrcol[1],
+		surf * surfcol[2] + refl * reflcol[2] + refr * refrcol[2]
+	]
 }
 
 rt.diffuse = function(r, hit)
@@ -68,10 +67,11 @@ rt.diffuse = function(r, hit)
 	var obj = hit.owner	
 	var m = obj.mat
 	var sumlight = 0	
+	var rt_lights = rt.lights
 		
-	for (var j in rt.lights)
+	for (var j = 0, len = rt_lights.length; j < len; j++)
 	{
-		var light = rt.lights[j]		
+		var light = rt_lights[j]		
 		var dir = vec.sub(hit.at, light.at)		
 		var dist = vec.len(dir)
 		

@@ -26,10 +26,11 @@ plane.prototype.trace = function(ray)
 	
 	if (t < math.eps) return
 		
-	var q = new Array(a.length)
-	
-	for (var i = 0; i < a.length; i++)
-		q[i] = a[i] + t * s[i]
+	var q = [
+		a[0] + t * s[0],
+		a[1] + t * s[1],
+		a[2] + t * s[2]
+	]
 		
 	return {at:q, dist:t}
 }
@@ -62,10 +63,11 @@ axisplane.prototype.trace = function(ray)
 	
 	if (t < math.eps) return
 		
-	var q = new Array(a.length)
-	
-	for (var i = 0; i < a.length; i++)
-		q[i] = a[i] + t * s[i]
+	var q = [
+		a[0] + t * s[0],
+		a[1] + t * s[1],
+		a[2] + t * s[2]
+	]
 		
 	return {at:q, dist:t}
 }
