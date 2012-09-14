@@ -1,10 +1,8 @@
-function plane(p, n, color, material)
+function plane(settings)
 {
-    this.p = p || vec.all(0)
-    this.n = vec.norm(n || vec.all(vec.dim - 1))
+    this.p = settings.center || vec.all(0)
+    this.n = vec.norm(settings.norm || [0, 0, 1])
     this.pn = vec.dot(this.p, this.n)
-    this.color = color || [1, 1, 1]
-    this.mat = material || mat.create()
 }
 
 plane.prototype.norm = function()
@@ -35,14 +33,12 @@ plane.prototype.trace = function(ray)
     return {at:q, dist:t}
 }
 
-function axisplane(p, axis, color, material)
+function axisplane(settings)
 {
-    this.p = p || vec.all(0)
-    this.axis = axis || vec.dim - 1
+    this.p = settings.center || vec.all(0)
+    this.axis = settings.axis || 2
     this.n = vec.e(this.axis)
     this.paxis = this.p[this.axis]
-    this.color = color || [1, 1, 1]
-    this.mat = material || mat.create()
 }
 
 axisplane.prototype.norm = function()

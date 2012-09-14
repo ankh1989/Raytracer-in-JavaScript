@@ -1,10 +1,8 @@
-texture = {}
-
-texture.checker = function(options)
+function checker(options)
 {
     options = options || {}
     
-    var s = options.s
+    var s = options.size
     
     if (isFinite(s))
         s = vec.all(s)
@@ -19,7 +17,7 @@ texture.checker = function(options)
     this.ic = ic
 }
 
-texture.checker.prototype.getcolor = function(at)
+checker.prototype.getcolor = function(at)
 {
     var sum = 0
 

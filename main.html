@@ -5,23 +5,12 @@
 <title>Raytracer in JavaScript</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-<script type="text/javascript" src="js/debug.js"></script>
 <script type="text/javascript" src="js/math.js"></script>
 <script type="text/javascript" src="js/material.js"></script>
-<script type="text/javascript" src="js/texture.js"></script>
 <script type="text/javascript" src="js/vector.js"></script>
-
-<script type="text/javascript" src="js/cylinder.js"></script>
-<script type="text/javascript" src="js/plane.js"></script>
-<script type="text/javascript" src="js/sphere.js"></script>
-<script type="text/javascript" src="js/cubecyl.js"></script>
-
-<script type="text/javascript" src="js/raytracer.js"></script>
 <script type="text/javascript" src="js/camera.js"></script>
-<script type="text/javascript" src="js/factory.js"></script>
 <script type="text/javascript" src="js/scenes.js"></script>
 <script type="text/javascript" src="js/scene.js"></script>
-<script type="text/javascript" src="js/screen.js"></script>
 
 <style type="text/css">
 body { font-family:calibri }
@@ -39,7 +28,7 @@ If you see this text, your browser does not support HTML5 and the raytracer will
 
 <div class="cp">
 <input id="render" type="button" value="Render"/>
-<input id="aarays" type="text" value="7" size="5" title="Rays per pixel"/>
+<input id="aarays" type="text" value="1" size="5" title="Rays per pixel"/>
 <input id="imgsize" type="text" value="600" size="5" title="Image size"/>
 <input id="nthreads" type="text" value="8" size="5" title="Number of threads"/>
 <input id="cellsize" type="text" value="150" size="5" title="Cell size"/>
@@ -47,12 +36,16 @@ If you see this text, your browser does not support HTML5 and the raytracer will
 <select id='scene'>
   <option>Scene 1</option>
   <option>Scene 2</option>
+  <option>Scene 3</option>
+  <option>Scene 4</option>
 </select>
 </div>
 
 <img alt="img" id="img" src="#canvas"/>
 
 <script type="text/javascript">
+vec.test()
+
 map = {}
 
 map.canvas = null
@@ -66,8 +59,6 @@ map.aarays = 1
 map.cellSize = 150
 
 map.grid = []
-
-map.screen = null
 
 map.scene = null
 
@@ -121,15 +112,6 @@ map.getgrid = function()
 map.Render = function()
 {
     map.starttime = map.time()
-
-    map.screen = new screen
-    ({
-        width:  map.width,
-        height: map.height,
-        aarays: map.aarays,
-        camera: map.scene.camera
-    })
-
     map.CreateCells()
     map.CreateThreadStates()
     map.StartThreads()
@@ -248,8 +230,13 @@ map.OnRendererMessage = function(event)
 
     if (typeof event.data == 'string')
         log(event.data)
-    else if (typeof event.data == 'object' && event.data.rgba)
-        map.OnRendererFinished(event)
+    if (typeof event.data == 'object')
+    {
+        if (event.data.rgba)
+            map.OnRendererFinished(event)
+        else if (event.data.maxgrad)
+            map.OnMaxGradUpdated(event)
+    }
     else
         log("unknown event from " + event.target.id)
 }
@@ -262,6 +249,13 @@ map.OnRendererFinished = function(event)
 
     map.CopyImageData(task.area, event.data.rgba)
     map.OnCellRendered(task.thread)
+}
+
+map.OnMaxGradUpdated = function(event)
+{
+    map.maxgrad = map.maxgrad || 0.0
+    if (event.data.maxgrad > map.maxgrad)
+        map.maxgrad = event.data.maxgrad
 }
 
 map.OnCellRendered = function(thread)
@@ -292,6 +286,9 @@ map.OnImageRendered = function()
 
     map.context.fillText(rps + ' RPS', 10, 5)
     disable(false)
+
+    console.log(map.width + 'x' + map.height + ' rendered for ' + duration + 'ms')
+    console.log('maxgrad=' + map.maxgrad)
 }
 
 map.CopyImageData = function(area, rgba)
@@ -363,6 +360,18 @@ $('render').onclick = function()
     
     map.Render()
 }
+
+/*
+x = a*cos(t)
+y = b*sin(t)
+
+nx = -a*sin(t) = -a*y/b
+ny = b*cos(t) = b*x/a
+
+f(s) = 0
+f(s*im) = 0
+n(s) = f'(s*im)*im
+*/
 
 $('image').onclick = function()
 {

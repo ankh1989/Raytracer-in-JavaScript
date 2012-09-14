@@ -6,44 +6,29 @@
 // to a JSON string and then deserialized by the
 // worker thread. This method of transferring implies, that
 // no object methods will be transferred.
-//
-// The workaround is to kee inside each object a field
-// called "settings" that contain all the information needed
-// to create a copy of the object. When the factory creates
-// an object, it attaches to the object the "settings" field
-// and when the object is deserialized on a worker thread,
-// the latter extracts the "settings" field and creates
-// a copy of the object.
 
 var factory = {}
 
-factory.create = function()
+factory.global = function(){return this}()
+
+factory.create = function(settings)
 {
-    var $ = arguments
-    var name = $[0]
-    var obj
+    var ctor = factory.global[settings.name]
+    if (!ctor) throw settings.name + " is not a ctor"
+    return new ctor(settings)
+}
 
-    if (name == 'sphere')
-        obj = new sphere($[1], $[2], $[3], $[4])
-    else if (name == 'cubecyl')
-        obj = new cubecyl($[1])
-    else if (name == 'cylinder')
-        obj = new cylinder($[1], $[2], $[3], $[4], $[5])
-    else if (name == 'plane')
-        obj = new plane($[1], $[2], $[3], $[4])
-    else if (name == 'axisplane')
-        obj = new axisplane($[1], $[2], $[3], $[4])
-    else if (name == 'sphere')
-        obj = new sphere($[1], $[2], $[3], $[4])
-    else if (name == 'texture.checker')
-        obj = new texture.checker($[1])
-    else
-        throw name + ' is an unknown object name: ' + $.length
+factory.deserialize = function(obj)
+{
+    if (typeof obj != 'object')
+        return obj
 
-    obj.settings = []
+    if (obj.name)
+        obj = factory.create(obj)
 
-    for (var i = 0; i < $.length; i++)
-        obj.settings[i] = $[i]
+    for (var i in obj)
+        obj[i] = factory.deserialize(obj[i])
 
-    return obj
+
+    return obj    
 }

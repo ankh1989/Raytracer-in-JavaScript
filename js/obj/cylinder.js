@@ -1,19 +1,11 @@
-function cylinder(a, b, r, color, material)
+function cylinder(settings)
 {
-    a = a || vec.all(0)
-    b = b || vec.e(vec.dim - 1)
-    color = color || [1, 0, 0]
-    material = material || mat.create()
-    r = r || 1
-
-    this.a = a
-    this.b = b
-    this.s = vec.norm(vec.sub(b, a))
-    this.r = r
-    this.r2 = r * r
-    this.h = vec.len(vec.sub(b, a))
-    this.color = color
-    this.mat = material
+    this.a = settings.center1 || [0, 0, 0]
+    this.b = settings.center2 || [0, 0, 1]
+    this.r = settings.radius || 1
+    this.s = vec.norm(vec.sub(this.b, this.a))
+    this.r2 = this.r * this.r
+    this.h = vec.len(vec.sub(this.b, this.a))
 }
 
 cylinder.prototype.trace = function(ray)
@@ -46,7 +38,7 @@ cylinder.prototype.trace = function(ray)
     if (t < math.eps)
         return	
             
-    var q = vec.add(p, vec.mul(t, v))	
+    var q = vec.add(p, vec.mul(t, v))
     var d = vec.dot(vec.sub(q, a), s)
     
     if (d > this.h)
@@ -76,7 +68,7 @@ cylinder.prototype.trace = function(ray)
         
         hit.norm = vec.mul(-1, s)
         return hit
-    }	
+    }
     
     var b = vec.add(a, vec.mul(d, s))
     var n = vec.mul(1/this.r, vec.sub(q, b))

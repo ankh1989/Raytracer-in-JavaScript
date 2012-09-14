@@ -19,15 +19,18 @@ onmessage = function(event)
 function loadDependencies()
 {
     importScripts(
+        'obj/cubecyl.js',
+        'obj/cylinder.js',
+        'obj/plane.js',
+        'obj/sphere.js',
+        'obj/isosurf.js',
+        'obj/group.js',
+        'obj/dodecahedron.js',
         'debug.js',
         'raytracer.js',
         'math.js',
         'scene.js',
         'vector.js',
-        'cubecyl.js',
-        'cylinder.js',
-        'plane.js',
-        'sphere.js',
         'material.js',
         'texture.js',
         'camera.js',
@@ -37,7 +40,7 @@ function loadDependencies()
 
 function ReadRenderSettings(data)
 {
-    recreateObjects(data.scene.objects)
+    data.scene.objects = factory.deserialize(data.scene.objects)
 
     self.area = data.area
 
@@ -50,21 +53,6 @@ function ReadRenderSettings(data)
     })
 }
 
-// During transferring of objects from the main thread to
-// the renderer thread, only simple fields are copied and
-// thus objects lose functions stored in their "prototype"
-// field.
-function recreateObjects(objects)
-{
-    for (var i in objects)
-        if (i != 'settings' && objects[i].settings)
-        {
-            objects[i] = factory.create.apply(null, objects[i].settings)
-            if (typeof objects[i] == 'object')
-                recreateObjects(objects[i])
-        }
-}
-
 // Renders the area and passes results to the main thread.
 function render()
 {
@@ -72,5 +60,6 @@ function render()
         [self.area.xmin, self.area.xmax],
         [self.area.ymin, self.area.ymax])
 
+    postMessage({maxgrad:math.findroot.maxgrad})
     postMessage({rgba:rgba})
 }

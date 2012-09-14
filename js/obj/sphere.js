@@ -1,11 +1,9 @@
-function sphere(center, radius, color, material)
+function sphere(settings)
 {
-    this.c      = center
-    this.r2     = radius * radius
-    this.ir     = 1/radius
-    this.r      = radius
-    this.mat    = material || mat.create()
-    this.color  = color || [1, 0, 0]
+    this.c      = settings.center
+    this.r      = settings.radius
+    this.r2     = this.r*this.r
+    this.ir     = 1/this.r
 }
 
 sphere.prototype.norm = function(at)

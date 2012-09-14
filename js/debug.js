@@ -57,6 +57,17 @@ debug.monitorcallsinfo = function(ns)
     return s.join('\n')
 }
 
+debug.isarray = function(obj)
+{
+    return false
+
+    return typeof obj == 'object' && typeof obj.prototype == 'object' &&
+        obj.prototype.join &&
+        obj.prototype.push && 
+        obj.prototype.pop &&
+        obj.prototype.sort
+}
+
 debug.tostr = function(obj, depth)
 {
     var type = typeof obj

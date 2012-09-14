@@ -10,16 +10,59 @@ raytracer.ray = function(from, to, power)
     return {from:from, dir:dir, power:power}
 }
 
+raytracer.traceshape = function(ray, shape)
+{
+    var src = ray.from
+
+    if (shape.transform)
+    {
+        if (!shape.transform.imx)
+            shape.transform.imx = vec.mx3x3.invm(shape.transform.mx)
+
+        var from = vec.mx3x3.mulvm(ray.from, shape.transform.imx)
+        var to = vec.mx3x3.mulvm(vec.add(ray.from, ray.dir), shape.transform.imx)
+
+        ray = raytracer.ray(from, to, ray.power)
+    }
+
+    var hit = shape.trace(ray)
+
+    if (hit && shape.transform)
+    {
+        hit.at = vec.mx3x3.mulvm(hit.at, shape.transform.mx)
+        hit.dist = vec.dist(src, hit.at)
+
+        if (hit.norm)
+            hit.norm = vec.norm(vec.mx3x3.mulvm(hit.norm, shape.transform.imx))
+    }
+
+    return hit
+}
+
+raytracer.getnorm = function(hit)
+{
+    if (hit.norm)
+        return hit.norm
+
+    var t = hit.owner.shape.transform
+
+    if (!t)
+        return hit.owner.shape.norm(hit.at)
+
+    var i = function(v) { return vec.mx3x3.mulvm(v, t.imx) }
+
+    return i(hit.owner.shape.norm(i(hit.at)))
+}
+
 raytracer.trace = function(ray, objects, min)
 {
     var min = min || 0
-
     var p
 
-    for (var i = 0, len = objects.length; i < len; i++)
+    for (var i = 0; i < objects.length; i++)
     {
         var obj = objects[i]
-        var ep = obj.trace(ray)
+        var ep = raytracer.traceshape(ray, obj.shape)
         
         if (!ep) continue
         
@@ -41,17 +84,19 @@ raytracer.prototype.color = function(r)
     var hit = raytracer.trace(r, this.scene.objects)
     if (!hit) return this.scene.bgcolor
     
-    hit.norm = hit.norm || hit.owner.norm(hit.at)
-        
-    var surfcol = this.diffuse(r, hit) || [0, 0, 0]
-    var reflcol = this.reflection(r, hit) || [0, 0, 0]
-    var refrcol = this.refraction(r, hit) || [0, 0, 0]
-    
-    var m = hit.owner.mat
-    
+    hit.norm = raytracer.getnorm(hit)
+
+    var nc = [0, 0, 0]
+
+    var m = hit.owner.material
+
     var surf = m.surface
     var refl = m.reflection
     var refr = m.transparency
+        
+    var surfcol = surf ? this.diffuse(r, hit) || nc : nc
+    var reflcol = refl ? this.reflection(r, hit) || nc : nc
+    var refrcol = refr ? this.refraction(r, hit) || nc : nc
     
     return [
         surf * surfcol[0] + refl * reflcol[0] + refr * refrcol[0],
@@ -62,14 +107,15 @@ raytracer.prototype.color = function(r)
 
 raytracer.prototype.diffuse = function(r, hit)
 {
-    var obj = hit.owner
-    var m = obj.mat
+    var m = hit.owner.material
     var sumlight = 0
     var lights = this.scene.lights
         
     for (var j = 0, len = lights.length; j < len; j++)
     {
         var light = lights[j]
+        if (light.power == 0) continue
+
         var dir = vec.sub(hit.at, light.at)
         var dist = vec.len(dir)
         
@@ -106,12 +152,21 @@ raytracer.prototype.diffuse = function(r, hit)
         }
     }
     
-    return vec.mul(sumlight, obj.color.getcolor ? obj.color.getcolor(hit.at) : obj.color)
+    var color = hit.owner.material.color
+
+    if (color.getcolor)
+        color = color.getcolor(hit.at)
+
+    return [
+        sumlight*color[0],
+        sumlight*color[1],
+        sumlight*color[2]
+    ]
 }
 
 raytracer.prototype.reflection = function(r, hit)
 {
-    var k = hit.owner.mat.reflection
+    var k = hit.owner.material.reflection
 
     if (k * r.power < math.eps)
         return
@@ -127,7 +182,7 @@ raytracer.prototype.reflection = function(r, hit)
 
 raytracer.prototype.refraction = function(r, hit)
 {
-    var m = hit.owner.mat
+    var m = hit.owner.material
     var t = m.transparency
     
     if (t * r.power < math.eps)

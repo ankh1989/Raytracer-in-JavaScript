@@ -9,18 +9,16 @@ function cubecyl(opts)
     var b = opts.b || vec.all(1)
     
     var cylr = opts.cyl.r || 0.06
-    var cylc = opts.cyl.color || [1, 0, 0]
     var cylm = opts.cyl.mat || mat.create()
     
     var spr = opts.sphere.r || 0.1
-    var spc = opts.sphere.color || [0, 1, 0]
     var spm = opts.sphere.mat || mat.create()
     
     var coords = function(i)
     {
         var p = []
         
-        for (var ii = 0; ii < vec.dim; ii++)
+        for (var ii = 0; ii < 3; ii++)
             p[ii] = (i & (1 << ii)) ? a[ii] : b[ii]
                 
         return p
@@ -28,32 +26,33 @@ function cubecyl(opts)
     
     this.objects = []
     
-    var corners = 1 << vec.dim
+    var corners = 1 << 3
     
     for (var i = 0; i < corners; i++)
     {
         var pi = coords(i)
-        this.objects.push(factory.create('sphere', pi, spr, spc, spm))
+        var sph = new sphere({center:pi, radius:spr})
+        this.objects.push({shape:sph, material:spm})
     
-        for (var ii = 0; ii < vec.dim; ii++)
+        for (var ii = 0; ii < 3; ii++)
             if ((i & (1 << ii)) == 0)
             {
                 var j = i | (1 << ii)
                 var pj = coords(j)
-                this.objects.push(factory.create('cylinder', pi, pj, cylr, cylc, cylm))
+                var cyl = new cylinder({center1:pi, center2:pj, radius:cylr})
+                this.objects.push({shape:cyl, material:cylm})
             }
     }
     
-    var bsp = {}
-    
-    bsp.c = vec.average(a, b)
-    bsp.r = vec.len(vec.sub(a, b))/2 + spr + math.eps
-    
-    this.boundingsphere = bsp
+    this.boundingsphere = {
+        name:   'sphere',
+        center: vec.average(a, b),
+        radius: vec.len(vec.sub(a, b))/2 + spr + math.eps
+    }
 }
 
 cubecyl.prototype.trace = function(ray)
 {
-    if (sphere.prototype.trace.apply(this.boundingsphere, [ray]))
+    if (this.boundingsphere.trace(ray))
         return raytracer.trace(ray, this.objects, 0)
 }
