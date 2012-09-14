@@ -48,13 +48,13 @@ cylinder.prototype.trace = function(ray)
         
         if (!hit) return
         
-        var sd = vec.sqrdist(hit.at, b)		
+        var sd = vec.sqrdist(hit.at, b)
         
         if (sd > r2) return
         
         hit.norm = s
         return hit
-    }	
+    }
     
     if (d < 0)
     {

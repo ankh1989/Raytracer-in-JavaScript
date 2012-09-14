@@ -44,7 +44,7 @@ scenes.create1 = function()
     var sm = function(c) { return mat.create({refl:0.6, t:0.0, color:c}) }
     var tc = {name:'checker', size:0.5}
     var pm = mat.create({refl:0.0, color:tc})
-    
+
     var objects = 
     [
         {shape:{name:'sphere', center:t[0], radius:1}, material:sm([1, 1, 0])},
@@ -128,19 +128,31 @@ scenes.create3 = function()
 
     var isobound = {name:'sphere', center:[0, 0, 0], radius:1.5}
 
+    var cam = new camera
+    ({
+        from:   [2.8, 3.4, 1.2],
+        to:     [0, 0, 0],
+        w:      1,
+        h:      1,
+    })
+
+    var mx = new m3x3(1)
+    mx.rotate(2, Math.PI/2).rotate(1, Math.PI).rotate(0, Math.PI/4)
+    var mt = {mx:mx.plain()}
+
     return new scene
     ({
         lights:
         [
             {at:[7, 8, 9], power:2},
-            {at:[-0.9, 0.8, 0.9], power:1},
+            {at:[-0.9, 0.8, 0.9], power:1}
         ],
         objects:
         [
-            {shape:{name:'isosurf', f:f_spheroid + '', bound:isobound, maxgrad:12}, material:pm}
+            {shape:{name:'isosurf', f:f_spheroid + '', bound:isobound, maxgrad:12}, material:pm, transform:mt}
         ],
-        camera:     scenes.camera2
-    })    
+        camera: cam,
+    })
 }
 
 scenes.create4 = function()
@@ -175,5 +187,42 @@ scenes.create4 = function()
         lights:     lights,
         objects:    [{shape:dodecahedron}, floor],
         camera:     cam
+    })
+}
+
+scenes.create5 = function()
+{
+    var sph = function(s, c)
+    {
+        return {shape:{name:'sphere', center:s, radius:1}, material:mat.create({color:c})}
+    }
+
+    var objects =
+    [
+        sph([0, 0, 0], [1, 1, 1]),
+        sph([4, 0, 0], [1, 0, 0]),
+        sph([0, 4, 0], [0, 1, 0]),
+        sph([0, 0, 4], [0, 0, 1])
+    ]
+
+    var cam = new camera
+    ({
+        from:   [9, 9, 9],
+        to:     [0, 0, 0],
+        w:      1,
+        h:      1
+    })
+
+    var lights = 
+    [
+        {at:cam.eye, power:1}
+    ]
+
+    return new scene
+    ({
+        lights:     lights,
+        objects:    objects,
+        camera:     cam,
+        bgcolor:    [0.8, 0.8, 1.0]
     })
 }

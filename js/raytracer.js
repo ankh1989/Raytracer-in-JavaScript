@@ -10,59 +10,44 @@ raytracer.ray = function(from, to, power)
     return {from:from, dir:dir, power:power}
 }
 
-raytracer.traceshape = function(ray, shape)
+raytracer.traceobj = function(ray, obj)
 {
-    var src = ray.from
+    var st = obj.transform
 
-    if (shape.transform)
+    if (!st) return obj.shape.trace(ray)
+
+    st.imx = st.imx || vec.mx3x3.invm(st.mx)
+
+    var rayst =
     {
-        if (!shape.transform.imx)
-            shape.transform.imx = vec.mx3x3.invm(shape.transform.mx)
-
-        var from = vec.mx3x3.mulvm(ray.from, shape.transform.imx)
-        var to = vec.mx3x3.mulvm(vec.add(ray.from, ray.dir), shape.transform.imx)
-
-        ray = raytracer.ray(from, to, ray.power)
+        from:   vec.mx3x3.mulvm(ray.from, st.imx),
+        dir:    vec.norm(vec.mx3x3.mulvm(ray.dir, st.imx)),
+        power:  ray.power
     }
 
-    var hit = shape.trace(ray)
+    var hit = obj.shape.trace(rayst)
 
-    if (hit && shape.transform)
-    {
-        hit.at = vec.mx3x3.mulvm(hit.at, shape.transform.mx)
-        hit.dist = vec.dist(src, hit.at)
+    if (!hit) return
 
-        if (hit.norm)
-            hit.norm = vec.norm(vec.mx3x3.mulvm(hit.norm, shape.transform.imx))
-    }
+    var owner = hit.owner || obj
+    var n = hit.norm || owner.shape.norm(hit.at)
+
+    hit.norm    = vec.norm(vec.mx3x3.mulvm(n, st.mx))
+    hit.at      = vec.mx3x3.mulvm(hit.at, st.mx)
+    hit.dist    = vec.dist(ray.from, hit.at)
 
     return hit
 }
 
-raytracer.getnorm = function(hit)
-{
-    if (hit.norm)
-        return hit.norm
-
-    var t = hit.owner.shape.transform
-
-    if (!t)
-        return hit.owner.shape.norm(hit.at)
-
-    var i = function(v) { return vec.mx3x3.mulvm(v, t.imx) }
-
-    return i(hit.owner.shape.norm(i(hit.at)))
-}
-
 raytracer.trace = function(ray, objects, min)
 {
-    var min = min || 0
+    var min = min || 0.0
     var p
 
     for (var i = 0; i < objects.length; i++)
     {
         var obj = objects[i]
-        var ep = raytracer.traceshape(ray, obj.shape)
+        var ep = raytracer.traceobj(ray, obj)
         
         if (!ep) continue
         
@@ -75,7 +60,7 @@ raytracer.trace = function(ray, objects, min)
             p.owner = p.owner || obj
         }
     }
-    
+
     return p
 }
 
@@ -83,20 +68,17 @@ raytracer.prototype.color = function(r)
 {
     var hit = raytracer.trace(r, this.scene.objects)
     if (!hit) return this.scene.bgcolor
-    
-    hit.norm = raytracer.getnorm(hit)
-
-    var nc = [0, 0, 0]
+    hit.norm = hit.norm || hit.owner.shape.norm(hit.at)
 
     var m = hit.owner.material
 
     var surf = m.surface
     var refl = m.reflection
     var refr = m.transparency
-        
-    var surfcol = surf ? this.diffuse(r, hit) || nc : nc
-    var reflcol = refl ? this.reflection(r, hit) || nc : nc
-    var refrcol = refr ? this.refraction(r, hit) || nc : nc
+
+    var surfcol = this.diffuse(r, hit) || [0, 0, 0]
+    var reflcol = this.reflection(r, hit) || [0, 0, 0]
+    var refrcol = this.refraction(r, hit) || [0, 0, 0]
     
     return [
         surf * surfcol[0] + refl * reflcol[0] + refr * refrcol[0],
@@ -111,15 +93,15 @@ raytracer.prototype.diffuse = function(r, hit)
     var sumlight = 0
     var lights = this.scene.lights
         
-    for (var j = 0, len = lights.length; j < len; j++)
+    for (var j = 0; j < lights.length; j++)
     {
         var light = lights[j]
-        if (light.power == 0) continue
-
         var dir = vec.sub(hit.at, light.at)
         var dist = vec.len(dir)
         
-        dir = vec.mul(1/dist, dir)
+        dir[0] /= dist
+        dir[1] /= dist
+        dir[2] /= dist
         
         var ray = {}
         

@@ -7,7 +7,7 @@ function sphere(settings)
 }
 
 sphere.prototype.norm = function(at)
-{	
+{
     var ir = this.ir
     var c = this.c
     

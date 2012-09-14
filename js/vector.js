@@ -238,6 +238,21 @@ vec.mx3x3.maxm = function(a)
     return max
 }
 
+vec.mx3x3.rotm = function(i, j, f)
+{
+    var m = vec.mx3x3.em()
+
+    var s = Math.sin(f)
+    var c = Math.cos(f)
+
+    m[i][i] = c
+    m[i][j] = s
+    m[j][i] = -s
+    m[j][j] = c
+
+    return m
+}
+
 vec.test = function()
 {
     var a = [
