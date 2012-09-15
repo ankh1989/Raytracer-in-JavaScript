@@ -138,7 +138,7 @@ scenes.create3 = function()
 
     var mx = new m3x3(1)
     mx.rotate(2, Math.PI/2).rotate(1, Math.PI).rotate(0, Math.PI/4)
-    var mt = {mx:mx.plain()}
+    var mt = {mx:mx.plain(), mp:[0, 0, 1]}
 
     return new scene
     ({

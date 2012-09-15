@@ -4,6 +4,8 @@ function sphere(settings)
     this.r      = settings.radius
     this.r2     = this.r*this.r
     this.ir     = 1/this.r
+
+    //this.transform = {mp:[0, 0, 0], mx:[[1, 0, 0], [0, 1, 0], [0, 0, 1]]}
 }
 
 sphere.prototype.norm = function(at)

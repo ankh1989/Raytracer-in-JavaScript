@@ -302,7 +302,9 @@ map.OnImageRendered = function()
     disable(false)
 
     console.log(map.width + 'x' + map.height + ' rendered for ' + duration + 'ms')
-    console.log('maxgrad=' + map.maxgrad)
+
+    if (map.maxgrad)
+        console.log('maxgrad=' + map.maxgrad)
 }
 
 map.CopyImageData = function(area, rgba)
@@ -351,6 +353,12 @@ function initialize()
     map.clear()
 }
 
+function CreateSelectedScene()
+{
+    var index = $('scene').selectedIndex
+    return scenes['create' + (index + 1)]()
+}
+
 $('render').onclick = function()
 {
     disable(true)
@@ -363,8 +371,7 @@ $('render').onclick = function()
         return x
     }
 
-    var index = $('scene').selectedIndex
-    map.scene = scenes['create' + (index + 1)]()
+    map.scene = CreateSelectedScene()
 
     map.aarays = $$('aarays')
     map.state.nThreads = $$('nthreads')
@@ -387,7 +394,7 @@ $('canvas').onclick = function(event)
         width:      $('canvas').width,
         height:     $('canvas').height,
         aarays:     1,
-        raytracer:  new raytracer({scene:factory.deserialize(scenes.create3())})
+        raytracer:  new raytracer({scene:factory.deserialize(CreateSelectedScene())})
     })
 
     var c = s.raycolor(event.x, event.y, 1)
