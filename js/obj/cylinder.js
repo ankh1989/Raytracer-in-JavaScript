@@ -8,10 +8,10 @@ function cylinder(settings)
     this.h = vec.len(vec.sub(this.b, this.a))
 }
 
-cylinder.prototype.trace = function(ray)
+cylinder.prototype.trace = function(r)
 {
-    var p = ray.from
-    var v = vec.norm(ray.dir)
+    var p = r.from
+    var v = vec.norm(r.dir)
     var a = this.a
     var s = vec.norm(this.s)
     var r2 = this.r2
@@ -44,7 +44,7 @@ cylinder.prototype.trace = function(ray)
     if (d > this.h)
     {
         var b = this.b
-        var hit = plane.prototype.trace.apply({p:b, n:s}, [ray])
+        var hit = plane.prototype.trace.apply({p:b, n:s}, [r])
         
         if (!hit) return
         
@@ -58,7 +58,7 @@ cylinder.prototype.trace = function(ray)
     
     if (d < 0)
     {
-        var hit = plane.prototype.trace.apply({p:a, n:s}, [ray])
+        var hit = plane.prototype.trace.apply({p:a, n:s}, [r])
         
         if (!hit) return
         

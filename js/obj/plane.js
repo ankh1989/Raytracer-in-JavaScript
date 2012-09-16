@@ -10,15 +10,15 @@ plane.prototype.norm = function()
     return this.n
 }
 
-plane.prototype.trace = function(ray)
-{	
-    var s = ray.dir
-    var n = this.n	
-    var sn = vec.dot(s, n)	
+plane.prototype.trace = function(r)
+{
+    var s = r.dir
+    var n = this.n
+    var sn = vec.dot(s, n)
     
     if (sn == 0) return
     
-    var a = ray.from
+    var a = r.from
     var pn = this.pn || vec.dot(this.p, n)
     var t = (pn - vec.dot(a, n)) / sn
     
@@ -46,15 +46,15 @@ axisplane.prototype.norm = function()
     return this.n
 }
 
-axisplane.prototype.trace = function(ray)
+axisplane.prototype.trace = function(r)
 {
     var axis = this.axis
-    var s = ray.dir
+    var s = r.dir
     var sn = s[axis]
     
     if (sn == 0) return
     
-    var a = ray.from
+    var a = r.from
     var t = (this.paxis - a[axis]) / sn
     
     if (t < math.eps) return

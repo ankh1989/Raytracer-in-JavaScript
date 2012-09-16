@@ -4,8 +4,8 @@ function group(settings)
     this.objects    = settings.objects
 }
 
-group.prototype.trace = function(ray)
+group.prototype.trace = function(r)
 {
-    if (!this.bound || this.bound.trace(ray))
-        return raytracer.trace(ray, this.objects, 0)
+    if (!this.bound || this.bound.trace(r))
+        return raytracer.trace(r, this.objects, 0)
 }

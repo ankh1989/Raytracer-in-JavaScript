@@ -26,6 +26,8 @@ function loadDependencies()
         'obj/isosurf.js',
         'obj/group.js',
         'obj/dodecahedron.js',
+        'obj/sphereflake.js',
+        'ray.js',
         'm3x3.js',
         'debug.js',
         'raytracer.js',

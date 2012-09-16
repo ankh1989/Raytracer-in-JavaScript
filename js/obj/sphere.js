@@ -4,8 +4,6 @@ function sphere(settings)
     this.r      = settings.radius
     this.r2     = this.r*this.r
     this.ir     = 1/this.r
-
-    //this.transform = {mp:[0, 0, 0], mx:[[1, 0, 0], [0, 1, 0], [0, 0, 1]]}
 }
 
 sphere.prototype.norm = function(at)
@@ -20,11 +18,11 @@ sphere.prototype.norm = function(at)
     ]
 }
 
-sphere.prototype.trace = function(ray)
+sphere.prototype.trace = function(r)
 {
-    var a = ray.from
+    var a = r.from
     var ac = vec.sub(this.c, a)
-    var s = ray.dir
+    var s = r.dir
     var acs = vec.dot(ac, s)
     
     if (acs < 0) return

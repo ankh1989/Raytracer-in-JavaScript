@@ -126,6 +126,27 @@ scenes.create3 = function()
         return x*(x + Math.sin(x*8)/3) + y*(y - Math.cos(y*9)/4 + Math.sin(z*10)/5) + z*(z + Math.sin(z*18)/3) - 1
     }
 
+    var f_rings = function(x, y, z)
+    {
+        var f_torus = function(x, y, z)
+        {
+            var R = 1
+            var r = 0.1
+            var x2y2 = x*x + y*y
+            return math.sqr(x2y2 + z*z + R*R - r*r) - 4*R*R*x2y2
+        }
+
+        var tz = f_torus(x, y, z)
+        var ty = f_torus(z, x, y)
+        var tx = f_torus(y, z, x)
+
+        var r = 0.1
+
+        var sqr = function(x) { return x }
+
+        return tx*ty*tz - r
+    }
+
     var isobound = {name:'sphere', center:[0, 0, 0], radius:1.5}
 
     var cam = new camera
@@ -136,20 +157,22 @@ scenes.create3 = function()
         h:      1,
     })
 
-    var mx = new m3x3(1)
-    mx.rotate(2, Math.PI/2).rotate(1, Math.PI).rotate(0, Math.PI/4)
-    var mt = {mx:mx.plain(), mp:[0, 0, 1]}
+    var mt =
+    {
+        mx: (new m3x3(1)).stretch(0, 1.5).stretch(1, 1.5).plain(),
+        mp: [0, 0, 0]
+    }
 
     return new scene
     ({
         lights:
         [
-            {at:[7, 8, 9], power:2},
-            {at:[-0.9, 0.8, 0.9], power:1}
+            {at:[0, 0, 0], power:2},
+            {at:cam.eye, power:1}
         ],
         objects:
         [
-            {shape:{name:'isosurf', f:f_spheroid + '', bound:isobound, maxgrad:12}, material:pm, transform:mt}
+            {shape:{name:'isosurf', f:f_rings + '', bound:isobound, maxgrad:150}, transform:mt, material:pm}
         ],
         camera: cam,
     })
@@ -224,5 +247,39 @@ scenes.create5 = function()
         objects:    objects,
         camera:     cam,
         bgcolor:    [0.8, 0.8, 1.0]
+    })
+}
+
+scenes.create6 = function()
+{
+    var m = (new m3x3(1)).rotate(1, -Math.PI/2).rotate(2, Math.PI/2)
+    var eye = m.vmul([0, 0, 5])
+
+    var cam = new camera({
+        from:   [2, 3, 4],
+        to:     [0, 0, 0],
+        w:      1,
+        h:      1
+    })
+
+    var lights = [
+        {at:[-5, 9, 16], power:1},
+        {at:cam.eye, power:1},
+    ]
+
+    var obj = {
+        name:   'sphereflake',
+        n:      4
+    }
+
+    var floor = {
+        material:   mat.create({color:{name:'checker', size:1}}),
+        shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
+    }
+
+    return new scene({
+        lights:     lights,
+        objects:    [{shape:obj}, floor],
+        camera:     cam
     })
 }

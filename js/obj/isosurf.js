@@ -10,18 +10,24 @@ isosurf.prototype.norm = function(at)
     return vec.norm(math.fulldiff(this.f, at))
 }
 
-isosurf.prototype.trace = function(ray)
+isosurf.prototype.trace = function(r)
 {
-    var hit0 = this.bound.trace(ray)
+    var hit0 = this.bound.trace(r)
     if (!hit0) return
     
-    var ray2 = {from:vec.add(hit0.at, vec.mul(math.eps, ray.dir)), dir:ray.dir}
+    var ray2 = new ray
+    ({
+        from:   vec.add(hit0.at, vec.mul(math.eps, r.dir)),
+        dir:    r.dir
+    })
+
     var hit1 = this.bound.trace(ray2)
+
     if (!hit1)
     {
         // the ray starts from inside the bounding shape
         hit1 = hit0
-        hit0 = {at:ray.from}
+        hit0 = {at:r.from}
     }
 
     var dist = vec.len(vec.sub(hit1.at, hit0.at))
@@ -29,9 +35,9 @@ isosurf.prototype.trace = function(ray)
     var s = function(t)
     {
         return [
-            hit0.at[0] + t*ray.dir[0],
-            hit0.at[1] + t*ray.dir[1],
-            hit0.at[2] + t*ray.dir[2]
+            hit0.at[0] + t*r.dir[0],
+            hit0.at[1] + t*r.dir[1],
+            hit0.at[2] + t*r.dir[2]
         ]
     }
 
@@ -42,6 +48,6 @@ isosurf.prototype.trace = function(ray)
     if (t)
         return {
             at: s(t),
-            dist: vec.len(vec.sub(hit0.at, ray.from)) + t
+            dist: vec.len(vec.sub(hit0.at, r.from)) + t
         }
 }

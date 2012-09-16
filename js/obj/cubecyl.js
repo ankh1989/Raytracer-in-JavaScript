@@ -51,8 +51,8 @@ function cubecyl(opts)
     }
 }
 
-cubecyl.prototype.trace = function(ray)
+cubecyl.prototype.trace = function(r)
 {
-    if (this.boundingsphere.trace(ray))
-        return raytracer.trace(ray, this.objects, 0)
+    if (this.boundingsphere.trace(r))
+        return raytracer.trace(r, this.objects, 0)
 }

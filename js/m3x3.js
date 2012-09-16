@@ -94,18 +94,24 @@ m3x3.prototype.mulv = function(v)
     return this.apply(function(i, j){this[i][j] *= v})
 }
 
+m3x3.prototype.vmul = function(v)
+{
+    var mx0 = this[0]
+    var mx1 = this[1]
+    var mx2 = this[2]
+
+    return [
+        v[0]*mx0[0] + v[1]*mx1[0] + v[2]*mx2[0],
+        v[0]*mx0[1] + v[1]*mx1[1] + v[2]*mx2[1],
+        v[0]*mx0[2] + v[1]*mx1[2] + v[2]*mx2[2],
+    ]
+}
+
 m3x3.prototype.mul = function(m)
 {
-    var r = new m3x3(0)
-
-    for (var i = 0; i < 3; i++)
-    for (var j = 0; j < 3; j++)
-    for (var k = 0; k < 3; k++)
-        r[i][j] += this[i][k]*m[k][j]
-
-    for (var i = 0; i < 3; i++)
-    for (var j = 0; j < 3; j++)
-        this[i][j] = r[i][j]
+    this[0] = m.vmul(this[0])
+    this[1] = m.vmul(this[1])
+    this[2] = m.vmul(this[2])
 
     return this
 }
@@ -113,6 +119,17 @@ m3x3.prototype.mul = function(m)
 m3x3.prototype.rotate = function(axis, angle)
 {
     return this.mul(new m3x3({axis:axis, rotate:angle}))
+}
+
+m3x3.prototype.stretch = function(axis, ratio)
+{
+    var v = this[axis]
+
+    v[0] *= ratio
+    v[1] *= ratio
+    v[2] *= ratio
+
+    return this
 }
 
 m3x3.prototype.transpose = function()

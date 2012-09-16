@@ -3,27 +3,20 @@ function raytracer(settings)
     this.scene = settings.scene
 }
 
-raytracer.ray = function(from, to, power)
-{
-    var dir = vec.norm(vec.sub(to, from))
-    power = power || 1
-    return {from:from, dir:dir, power:power}
-}
-
-raytracer.traceobj = function(ray, obj)
+raytracer.traceobj = function(r, obj)
 {
     var st = obj.transform
 
-    if (!st) return obj.shape.trace(ray)
+    if (!st) return obj.shape.trace(r)
 
     st.imx = st.imx || vec.mx3x3.invm(st.mx)
 
-    var rayst =
-    {
-        from:   vec.add(vec.mx3x3.mulvm(ray.from, st.imx), st.mp),
-        dir:    vec.norm(vec.mx3x3.mulvm(ray.dir, st.imx)),
-        power:  ray.power
-    }
+    var rayst = new ray
+    ({
+        from:   vec.add(vec.mx3x3.mulvm(r.from, st.imx), st.mp),
+        dir:    vec.norm(vec.mx3x3.mulvm(r.dir, st.imx)),
+        power:  r.power
+    })
 
     var hit = obj.shape.trace(rayst)
 
@@ -34,12 +27,12 @@ raytracer.traceobj = function(ray, obj)
 
     hit.norm    = vec.norm(vec.mx3x3.mulvm(n, st.mx))
     hit.at      = vec.mx3x3.mulvm(vec.sub(hit.at, st.mp), st.mx)
-    hit.dist    = vec.dist(ray.from, hit.at)
+    hit.dist    = vec.dist(r.from, hit.at)
 
     return hit
 }
 
-raytracer.trace = function(ray, objects, min)
+raytracer.trace = function(r, objects, min)
 {
     var min = min || 0.0
     var p
@@ -47,7 +40,7 @@ raytracer.trace = function(ray, objects, min)
     for (var i = 0; i < objects.length; i++)
     {
         var obj = objects[i]
-        var ep = raytracer.traceobj(ray, obj)
+        var ep = raytracer.traceobj(r, obj)
         
         if (!ep) continue
         
@@ -102,13 +95,9 @@ raytracer.prototype.diffuse = function(r, hit)
         dir[0] /= dist
         dir[1] /= dist
         dir[2] /= dist
-        
-        var ray = {}
-        
-        ray.from = light.at
-        ray.dir = dir
-        
-        var q = raytracer.trace(ray, this.scene.objects, dist - math.eps)
+
+        var lightray = new ray({from:light.at, dir:dir})
+        var q = raytracer.trace(lightray, this.scene.objects, dist - math.eps)
         
         if (!q || vec.sqrdist(q.at, hit.at) > math.eps)
             continue
@@ -148,36 +137,31 @@ raytracer.prototype.diffuse = function(r, hit)
 
 raytracer.prototype.reflection = function(r, hit)
 {
-    var k = hit.owner.material.reflection
+    var p = hit.owner.material.reflection*r.power
+    if (p < math.eps) return
 
-    if (k * r.power < math.eps)
-        return
+    var reflray = new ray
+    ({
+        from:   hit.at,
+        dir:    vec.reflect(r.dir, hit.norm),
+        power:  p
+    })
 
-    var q = {}
-
-    q.dir = vec.reflect(r.dir, hit.norm)
-    q.from = hit.at
-    q.power = k * r.power
-
-    return this.color(q)
+    return this.color(reflray)
 }
 
 raytracer.prototype.refraction = function(r, hit)
 {
-    var m = hit.owner.material
-    var t = m.transparency
-    
-    if (t * r.power < math.eps)
-        return
-    
-    var dir = vec.refract(r.dir, hit.norm, m.refrcoeff)
-    if (!dir) return
-        
-    var q = {}
+    var p = hit.owner.material.transparency*r.power
+    if (p < math.eps) return
 
-    q.dir = dir
-    q.from = hit.at
-    q.power = t * r.power
-        
-    return this.color(q)
+    var refrray = new ray
+    ({
+        from:   hit.at,
+        dir:    vec.refract(r.dir, hit.norm, hit.owner.material.refrcoeff),
+        power:  p
+    })
+
+    if (refrray.dir)
+        return this.color(refrray)
 }

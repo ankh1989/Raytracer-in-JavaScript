@@ -14,9 +14,9 @@ screen.prototype.raycolor = function(x, y, raypower)
     var y2 = vec.mul(y / this.height, cam.down)
     
     var scr = vec.add(cam.lt, vec.add(x2, y2))
-    var ray = raytracer.ray(cam.eye, scr, raypower)
+    var r = new ray({from:cam.eye, to:scr, power:raypower})
 
-    return this.rt.color(ray)
+    return this.rt.color(r)
 }
 
 screen.prototype.renderarea = function(xrange, yrange)
