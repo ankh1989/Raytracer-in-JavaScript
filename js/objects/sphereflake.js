@@ -36,7 +36,7 @@ function sphereflake(args)
     objects.push
     ({
         name:       'object',
-        material:   mat.create({color:[1, 1, 1], lam:0.1, ph:0.4}),
+        material:   {name:'material', color:[1, 1, 1], lam:0.1, ph:0.4},
         shape:      {name:'sphere', center:c, radius:r}
     })
 

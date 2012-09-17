@@ -41,9 +41,9 @@ scenes.create1 = function()
     for (var i = 0, len = t.length; i < len; i++)
         t[i] = vec.sub(t[i], c)
         
-    var sm = function(c) { return mat.create({refl:0.6, t:0.0, color:c}) }
+    var sm = function(c) { return {name:'material', refl:0.6, t:0.0, color:c} }
     var tc = {name:'checker', size:0.5}
-    var pm = mat.create({refl:0.0, color:tc})
+    var pm = {name:'material', refl:0.0, color:tc}
 
     var objects = 
     [
@@ -71,10 +71,10 @@ scenes.create2 = function()
         {at:[-0.9, 0.8, 0.9],   power:2},
     ]
     
-    var sm = mat.create({refl:0.7, color:[0, 1, 0]})
-    var cm = mat.create({refl:0.1, t:0.8, rc:1.2, color:[1, 0, 0]})
+    var sm = {name:'material', refl:0.7, color:[0, 1, 0]}
+    var cm = {name:'material', refl:0.1, t:0.8, rc:1.2, color:[1, 0, 0]}
     var tc = {name:'checker', size:0.5}
-    var pm = mat.create({refl:0.5, color:tc})    
+    var pm = {name:'material', refl:0.5, color:tc}
     var sr = 0.2
     
     var objects = 
@@ -93,9 +93,9 @@ scenes.create2 = function()
 
 scenes.create3 = function()
 {
-    var sm = mat.create({refl:0.4, color:[1, 0, 0]})
+    var sm = {name:'material', refl:0.4, color:[1, 0, 0]}
     var pc = {name:'checker', size:5}
-    var pm = mat.create({refl:0.0, color:pc})
+    var pm = {name:'material', refl:0.0, color:pc}
 
     var f_ring = function(x, y, z)
     {
@@ -203,8 +203,8 @@ scenes.create4 = function()
         h:      1
     })
 
-    var sphm = mat.create({color:[1, 0, 0], refl:0.6})
-    var cylm = mat.create({color:[0, 1, 0], refl:0.7})
+    var sphm = {name:'material', color:[1, 0, 0], refl:0.6}
+    var cylm = {name:'material', color:[0, 1, 0], refl:0.7}
 
     var dodecahedron =
     {
@@ -219,7 +219,7 @@ scenes.create4 = function()
 
     var floor = {
         name:       'object',
-        material:   mat.create({color:{name:'checker', size:1}, refl:0.5}),
+        material:   {name:'material', color:{name:'checker', size:1}, refl:0.5},
         shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
     }
 
@@ -234,7 +234,7 @@ scenes.create5 = function()
 {
     var sph = function(s, c)
     {
-        return {name:'object', shape:{name:'sphere', center:s, radius:1}, material:mat.create({color:c})}
+        return {name:'object', shape:{name:'sphere', center:s, radius:1}, material:{name:'material', color:c}}
     }
 
     var objects =
@@ -297,7 +297,7 @@ scenes.create6 = function()
     var floor =
     {
         name:       'object',
-        material:   mat.create({color:{name:'checker', size:1}}),
+        material:   {name:'material', color:{name:'checker', size:1}},
         shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
     }
 

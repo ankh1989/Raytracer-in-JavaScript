@@ -9,10 +9,10 @@ function cubecyl(opts)
     var b = opts.b || vec.all(1)
     
     var cylr = opts.cyl.r || 0.06
-    var cylm = opts.cyl.mat || mat.create()
+    var cylm = opts.cyl.mat || {name:'material'}
     
     var spr = opts.sphere.r || 0.1
-    var spm = opts.sphere.mat || mat.create()
+    var spm = opts.sphere.mat || {name:'material'}
     
     var coords = function(i)
     {

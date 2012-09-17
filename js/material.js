@@ -1,24 +1,16 @@
-mat = {}
-
-mat.create = function(opts)
+function material(args)
 {
-    opts = opts || {}
-    
-    var m = {}
-    
     var $ = function(val, defaultval)
     {
-        return typeof val == 'undefined' ? defaultval : val
+        return typeof args[val] == 'undefined' ? defaultval : args[val]
     }
     
-    m.lambert       = $(opts.lam, 0.4)
-    m.phong         = $(opts.ph, 0.6)
-    m.phongpower    = $(opts.phpow, 7)
-    m.reflection    = $(opts.refl, 0)
-    m.refrcoeff     = $(opts.rc, 1)
-    m.transparency  = $(opts.t, 0)
-    m.surface       = 1 - m.reflection - m.transparency
-    m.color         = $(opts.color, [0, 1, 0])
-    
-    return m
+    this.lambert       = $('lam', 0.4)
+    this.phong         = $('ph', 0.6)
+    this.phongpower    = $('phpow', 7)
+    this.reflection    = $('refl', 0)
+    this.refrcoeff     = $('rc', 1)
+    this.transparency  = $('t', 0)
+    this.surface       = 1 - this.reflection - this.transparency
+    this.color         = $('color', [0, 1, 0])
 }
