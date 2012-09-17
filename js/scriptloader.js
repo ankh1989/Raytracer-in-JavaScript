@@ -2,6 +2,10 @@ function LoadScripts(load)
 {
     var pathes =
     [
+        'math/math.js',
+        'math/vector.js',
+        'math/m3x3.js',
+
         'shapes/cylinder.js',
         'shapes/plane.js',
         'shapes/sphere.js',
@@ -14,13 +18,10 @@ function LoadScripts(load)
         'objects/sphereflake.js',
 
         'ray.js',
-        'm3x3.js',
         'debug.js',
         'raytracer.js',
-        'math.js',
         'scene.js',
         'scenes.js',
-        'vector.js',
         'material.js',
         'texture.js',
         'camera.js',

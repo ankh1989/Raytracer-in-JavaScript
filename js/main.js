@@ -2,7 +2,6 @@ var nScriptsPending = 0
 
 LoadScripts(function(path)
 {
-    console.log('loading ' + path)
     nScriptsPending++
     var script = document.createElement('script')
     script.type = 'text/javascript'
@@ -315,7 +314,6 @@ function OnAllScriptsLoaded()
 
     function ListScenes()
     {
-        console.log('ListScenes is called')
         for (var name in scenes)
         {
             var item = document.createElement('option')
