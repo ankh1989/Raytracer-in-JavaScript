@@ -19,15 +19,17 @@ onmessage = function(event)
 function loadDependencies()
 {
     importScripts(
-        'obj/object.js',
-        'obj/group.js',
-        'obj/cubecyl.js',
-        'obj/cylinder.js',
-        'obj/plane.js',
-        'obj/sphere.js',
-        'obj/isosurf.js',
-        'obj/dodecahedron.js',
-        'obj/sphereflake.js',
+        'shapes/cylinder.js',
+        'shapes/plane.js',
+        'shapes/sphere.js',
+        'shapes/isosurf.js',
+
+        'objects/object.js',
+        'objects/group.js',
+        'objects/cubecyl.js',
+        'objects/dodecahedron.js',
+        'objects/sphereflake.js',
+
         'ray.js',
         'm3x3.js',
         'debug.js',
