@@ -10,38 +10,16 @@
 // that need be rendered.
 onmessage = function(event)
 {
-    loadDependencies()
+    LoadDependencies()
     ReadRenderSettings(event.data)
     render()
 }
 
 // Loads scripts that are needed by the renderer.
-function loadDependencies()
+function LoadDependencies()
 {
-    importScripts(
-        'shapes/cylinder.js',
-        'shapes/plane.js',
-        'shapes/sphere.js',
-        'shapes/isosurf.js',
-
-        'objects/object.js',
-        'objects/group.js',
-        'objects/cubecyl.js',
-        'objects/dodecahedron.js',
-        'objects/sphereflake.js',
-
-        'ray.js',
-        'm3x3.js',
-        'debug.js',
-        'raytracer.js',
-        'math.js',
-        'scene.js',
-        'vector.js',
-        'material.js',
-        'texture.js',
-        'camera.js',
-        'factory.js',
-        'screen.js')
+    importScripts('scriptloader.js')
+    LoadScripts(importScripts)
 }
 
 function ReadRenderSettings(data)

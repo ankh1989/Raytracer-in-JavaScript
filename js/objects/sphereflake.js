@@ -6,8 +6,6 @@ function sphereflake(args)
     var rm      = args.rm || 1/3
     var n       = args.n
 
-    this.$ = args.$ || 'root'
-
     var sc2dc = function(a, b)
     {
         return [
@@ -55,7 +53,6 @@ function sphereflake(args)
             objects.push
             ({
                 name:   'sphereflake',
-                $:      this.$ + '.' + i,
                 center: ci,
                 radius: ri,
                 axes:   mi,

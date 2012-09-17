@@ -1,23 +1,5 @@
 scenes =
 {
-    /*
-    scenes.camera1 = new camera
-    ({
-        from:   [3.8, 4.4, 4.5],
-        to:     [0, 0, 0],
-        w:      1,
-        h:      1,
-    })
-
-    scenes.camera2 = new camera
-    ({
-        from:   [2.8, 3.4, 1.2],
-        to:     [0, 0, 0],
-        w:      1,
-        h:      1,
-    })
-    */
-
     '4 spheres': function()
     {
         var lights =
