@@ -1,0 +1,5 @@
+An object is a shape or a set of shapes (see /shapes folder) in 3D space with a material. An object has properties of real world objects, such as color, reflectance and transparency.
+
+If an object is represented by one shape, it is created with the "object" constructor. The constructor allows to specify the shape, the material and the affine transform that will be applied to the shape (the affine transform allows to move and rotate the shape).
+
+A set of objects can be grouped together into one object by the "group" constructor. It allows to specify the list of objects in the group and the affine transform that is applied to the group as a whole.

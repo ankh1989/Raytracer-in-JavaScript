@@ -1,0 +1,20 @@
+A "shape" is a surface in 3D space that can be observed by the "trace" method provided by the "shape". This "trace" method accepts a "ray" object
+
+ray = 
+{
+	from: [1, 2, 3], // the source of the ray
+	dir:  [0, 1, 0]  // the direction of the ray - the length of this vector is always 1
+}
+
+finds the nearest intersection of the surface with the ray and returns information about the intersection:
+
+hit = 
+{
+	at:   [3, 1, 4], // the nearest point on the surface with which the ray intersects
+	norm: [1, 0, 0], // the normal to the surface at that point; this vector must be normalised
+	dist: 15.7       // the distance from the ray to the intersection
+}
+
+In the case when the ray does not intersect with the shape, the "trace" method returns "false" or anything that evaluates to "false".
+
+A shape does not have a color or any other material properties. A shape only defines a form in 3D space.
