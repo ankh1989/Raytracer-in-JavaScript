@@ -12,5 +12,5 @@ function material(args)
     this.refrcoeff     = $('rc', 1)
     this.transparency  = $('t', 0)
     this.surface       = 1 - this.reflection - this.transparency
-    this.color         = $('color', [0, 1, 0])
+    this.color         = args.color
 }

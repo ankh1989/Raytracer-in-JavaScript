@@ -1,10 +1,12 @@
 function sphereflake(args)
 {
-    var c = args.center || [0, 0, 0]
-    var r = args.radius || 1
-    var m = args.axes || new m3x3(1)
-    var rm = args.rm || 1/3
-    var n = args.n
+    var c       = args.center || [0, 0, 0]
+    var r       = args.radius || 1
+    var m       = args.axes || new m3x3(1)
+    var rm      = args.rm || 1/3
+    var n       = args.n
+
+    this.$ = args.$ || 'root'
 
     var sc2dc = function(a, b)
     {
@@ -36,7 +38,7 @@ function sphereflake(args)
     objects.push
     ({
         name:       'object',
-        material:   {name:'material', color:[1, 1, 1], lam:0.1, ph:0.4},
+        material:   {name:'material', color:[1, 1, 1]},
         shape:      {name:'sphere', center:c, radius:r}
     })
 
@@ -52,16 +54,13 @@ function sphereflake(args)
 
             objects.push
             ({
-                name: 'object',
-                shape:
-                {
-                    name:   'sphereflake',
-                    center: ci,
-                    radius: ri,
-                    axes:   mi,
-                    rm:     rm,
-                    n:      n - 1
-                }
+                name:   'sphereflake',
+                $:      this.$ + '.' + i,
+                center: ci,
+                radius: ri,
+                axes:   mi,
+                rm:     rm,
+                n:      n - 1
             })
         }
 

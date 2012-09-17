@@ -286,15 +286,26 @@ function makeimg()
 
 function initialize()
 {
+    ListScenes()
     map.canvas = $('canvas')
     map.setsize($('imgsize').value)
     map.clear()
 }
 
+function ListScenes()
+{
+    for (var name in scenes)
+    {
+        var item = document.createElement('option')
+        item.text = name
+        $('scene').appendChild(item)
+    }
+}
+
 function CreateSelectedScene()
 {
-    var index = $('scene').selectedIndex
-    return scenes['create' + (index + 1)]()
+    var name = $('scene').options[$('scene').selectedIndex].text
+    return scenes[name]()
 }
 
 $('render').onclick = function()
