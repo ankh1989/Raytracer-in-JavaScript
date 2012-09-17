@@ -24,7 +24,7 @@ function cubecyl(opts)
         return p
     }
     
-    this.objects = []
+    var objects = []
     
     var corners = 1 << 3
     
@@ -32,7 +32,7 @@ function cubecyl(opts)
     {
         var pi = coords(i)
         var sph = new sphere({center:pi, radius:spr})
-        this.objects.push({shape:sph, material:spm})
+        objects.push({name:'object', shape:sph, material:spm})
     
         for (var ii = 0; ii < 3; ii++)
             if ((i & (1 << ii)) == 0)
@@ -40,19 +40,22 @@ function cubecyl(opts)
                 var j = i | (1 << ii)
                 var pj = coords(j)
                 var cyl = new cylinder({center1:pi, center2:pj, radius:cylr})
-                this.objects.push({shape:cyl, material:cylm})
+                objects.push({name:'object', shape:cyl, material:cylm})
             }
     }
-    
-    this.boundingsphere = {
+
+    var boundingsphere =
+    {
         name:   'sphere',
         center: vec.average(a, b),
         radius: vec.len(vec.sub(a, b))/2 + spr + math.eps
     }
+
+    group.apply(this,
+    [{
+        objects:    objects,
+        bound:      boundingsphere
+    }])
 }
 
-cubecyl.prototype.trace = function(r)
-{
-    if (this.boundingsphere.trace(r))
-        return raytracer.trace(r, this.objects, 0)
-}
+cubecyl.prototype = group.prototype

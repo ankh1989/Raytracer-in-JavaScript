@@ -6,18 +6,6 @@ function sphere(settings)
     this.ir     = 1/this.r
 }
 
-sphere.prototype.norm = function(at)
-{
-    var ir = this.ir
-    var c = this.c
-    
-    return [
-        ir * (at[0] - c[0]),
-        ir * (at[1] - c[1]),
-        ir * (at[2] - c[2])
-    ]
-}
-
 sphere.prototype.trace = function(r)
 {
     var a = r.from
@@ -48,6 +36,14 @@ sphere.prototype.trace = function(r)
         a[1] + t * s[1],
         a[2] + t * s[2]
     ]
+
+    var c = this.c
+
+    var n = [
+        this.ir * (p[0] - c[0]),
+        this.ir * (p[1] - c[1]),
+        this.ir * (p[2] - c[2])
+    ]
     
-    return {at:p, dist:t}
+    return {at:p, dist:t, norm:n}
 }

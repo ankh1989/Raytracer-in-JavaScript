@@ -5,9 +5,10 @@ function raytracer(settings)
 
 raytracer.traceobj = function(r, obj)
 {
-    var st = obj.transform
+    if (!obj.transform)
+        return obj.trace(r)
 
-    if (!st) return obj.shape.trace(r)
+    var st = obj.transform
 
     st.imx = st.imx || vec.mx3x3.invm(st.mx)
 
@@ -18,14 +19,11 @@ raytracer.traceobj = function(r, obj)
         power:  r.power
     })
 
-    var hit = obj.shape.trace(rayst)
+    var hit = obj.trace(rayst)
 
     if (!hit) return
 
-    var owner = hit.owner || obj
-    var n = hit.norm || owner.shape.norm(hit.at)
-
-    hit.norm    = vec.norm(vec.mx3x3.mulvm(n, st.mx))
+    hit.norm    = vec.norm(vec.mx3x3.mulvm(hit.norm, st.mx))
     hit.at      = vec.mx3x3.mulvm(vec.sub(hit.at, st.mp), st.mx)
     hit.dist    = vec.dist(r.from, hit.at)
 
@@ -61,7 +59,6 @@ raytracer.prototype.color = function(r)
 {
     var hit = raytracer.trace(r, this.scene.objects)
     if (!hit) return this.scene.bgcolor
-    hit.norm = hit.norm || hit.owner.shape.norm(hit.at)
 
     var m = hit.owner.material
 

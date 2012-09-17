@@ -5,11 +5,6 @@ function plane(settings)
     this.pn = vec.dot(this.p, this.n)
 }
 
-plane.prototype.norm = function()
-{
-    return this.n
-}
-
 plane.prototype.trace = function(r)
 {
     var s = r.dir
@@ -30,7 +25,7 @@ plane.prototype.trace = function(r)
         a[2] + t * s[2]
     ]
         
-    return {at:q, dist:t}
+    return {at:q, dist:t, norm:n}
 }
 
 function axisplane(settings)
@@ -39,11 +34,6 @@ function axisplane(settings)
     this.axis = settings.axis || 2
     this.n = vec.e(this.axis)
     this.paxis = this.p[this.axis]
-}
-
-axisplane.prototype.norm = function()
-{
-    return this.n
 }
 
 axisplane.prototype.trace = function(r)
@@ -65,5 +55,5 @@ axisplane.prototype.trace = function(r)
         a[2] + t * s[2]
     ]
         
-    return {at:q, dist:t}
+    return {at:q, dist:t, norm:this.n}
 }

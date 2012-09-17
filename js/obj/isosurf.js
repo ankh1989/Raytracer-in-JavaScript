@@ -5,11 +5,6 @@ function isosurf(settings)
     this.maxgrad    = settings.maxgrad
 }
 
-isosurf.prototype.norm = function(at)
-{
-    return vec.norm(math.fulldiff(this.f, at))
-}
-
 isosurf.prototype.trace = function(r)
 {
     var hit0 = this.bound.trace(r)
@@ -46,8 +41,14 @@ isosurf.prototype.trace = function(r)
     var t = math.findroot(g, 0, dist, this.maxgrad)
 
     if (t)
+    {
+        var p = s(t)
+        var n = vec.norm(math.fulldiff(f, p))
+
         return {
-            at: s(t),
-            dist: vec.len(vec.sub(hit0.at, r.from)) + t
+            at:     p,
+            norm:   n,
+            dist:   vec.len(vec.sub(hit0.at, r.from)) + t
         }
+    }
 }

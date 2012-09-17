@@ -1,7 +1,8 @@
-function group(settings)
+function group(args)
 {
-    this.bound      = settings.bound
-    this.objects    = settings.objects
+    this.bound      = args.bound
+    this.objects    = args.objects
+    this.transform  = args.transform
 }
 
 group.prototype.trace = function(r)

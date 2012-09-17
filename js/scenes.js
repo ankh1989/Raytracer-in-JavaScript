@@ -47,19 +47,19 @@ scenes.create1 = function()
 
     var objects = 
     [
-        {shape:{name:'sphere', center:t[0], radius:1}, material:sm([1, 1, 0])},
-        {shape:{name:'sphere', center:t[1], radius:1}, material:sm([1, 0, 0])},
-        {shape:{name:'sphere', center:t[2], radius:1}, material:sm([0, 1, 0])},
-        {shape:{name:'sphere', center:t[3], radius:1}, material:sm([0, 1, 1])},
+        {name:'object', shape:{name:'sphere', center:t[0], radius:1}, material:sm([1, 1, 0])},
+        {name:'object', shape:{name:'sphere', center:t[1], radius:1}, material:sm([1, 0, 0])},
+        {name:'object', shape:{name:'sphere', center:t[2], radius:1}, material:sm([0, 1, 0])},
+        {name:'object', shape:{name:'sphere', center:t[3], radius:1}, material:sm([0, 1, 1])},
 
-        {shape:{name:'axisplane', center:[0, 0, -1], axis:2}, material:pm},
+        {name:'object', shape:{name:'axisplane', center:[0, 0, -1], axis:2}, material:pm},
     ]
 
     return new scene
     ({
-        lights:lights,
-        objects:objects,
-        camera:scenes.camera1
+        lights:     lights,
+        objects:    objects,
+        camera:     scenes.camera1
     })
 }
 
@@ -79,15 +79,15 @@ scenes.create2 = function()
     
     var objects = 
     [
-        {shape:{name:'cubecyl', sphere:{r:sr, mat:sm}, cyl:{r:0.08, mat:cm}}},
-        {shape:{name:'axisplane', center:[0, 0, -1-sr], axis:2}, material:pm},
+        {name:'object', shape:{name:'cubecyl', sphere:{r:sr, mat:sm}, cyl:{r:0.08, mat:cm}}},
+        {name:'object', shape:{name:'axisplane', center:[0, 0, -1-sr], axis:2}, material:pm},
     ]
 
     return new scene
     ({
-        lights:lights,
-        objects:objects,
-        camera:scenes.camera1
+        lights:     lights,
+        objects:    objects,
+        camera:     scenes.camera1
     })
 }
 
@@ -163,6 +163,20 @@ scenes.create3 = function()
         mp: [0, 0, 0]
     }
 
+    var iso =
+    {
+        name:       'object',
+        transform:  mt,
+        material:   pm,
+        shape:
+        {
+            name:   'isosurf',
+            f:      f_rings + '',
+            bound:  isobound,
+            maxgrad:150
+        }
+    }
+
     return new scene
     ({
         lights:
@@ -170,10 +184,7 @@ scenes.create3 = function()
             {at:[0, 0, 0], power:2},
             {at:cam.eye, power:1}
         ],
-        objects:
-        [
-            {shape:{name:'isosurf', f:f_rings + '', bound:isobound, maxgrad:150}, transform:mt, material:pm}
-        ],
+        objects: [iso],
         camera: cam,
     })
 }
@@ -195,20 +206,26 @@ scenes.create4 = function()
     var sphm = mat.create({color:[1, 0, 0], refl:0.6})
     var cylm = mat.create({color:[0, 1, 0], refl:0.7})
 
-    var dodecahedron = {
-        name:       'dodecahedron',
-        spheres:    {radius:0.2, material:sphm},
-        cylinders:  {radius:0.1, material:cylm}
+    var dodecahedron =
+    {
+        name: 'object',
+        shape:
+        {
+            name:       'dodecahedron',
+            spheres:    {radius:0.2, material:sphm},
+            cylinders:  {radius:0.1, material:cylm}
+        }
     }
 
     var floor = {
+        name:       'object',
         material:   mat.create({color:{name:'checker', size:1}, refl:0.5}),
         shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
     }
 
     return new scene({
         lights:     lights,
-        objects:    [{shape:dodecahedron}, floor],
+        objects:    [dodecahedron, floor],
         camera:     cam
     })
 }
@@ -217,7 +234,7 @@ scenes.create5 = function()
 {
     var sph = function(s, c)
     {
-        return {shape:{name:'sphere', center:s, radius:1}, material:mat.create({color:c})}
+        return {name:'object', shape:{name:'sphere', center:s, radius:1}, material:mat.create({color:c})}
     }
 
     var objects =
@@ -267,19 +284,27 @@ scenes.create6 = function()
         {at:cam.eye, power:1},
     ]
 
-    var obj = {
-        name:   'sphereflake',
-        n:      4
+    var flake =
+    {
+        name:   'object',
+        shape:
+        {
+            name:   'sphereflake',
+            n:      4
+        }
     }
 
-    var floor = {
+    var floor =
+    {
+        name:       'object',
         material:   mat.create({color:{name:'checker', size:1}}),
         shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
     }
 
-    return new scene({
+    return new scene
+    ({
         lights:     lights,
-        objects:    [{shape:obj}, floor],
+        objects:    [flake, floor],
         camera:     cam
     })
 }
