@@ -5,6 +5,14 @@ function plane(settings)
     this.pn = vec.dot(this.p, this.n)
 }
 
+plane.prototype.inside = function(p)
+{
+    var c = this.p
+    var n = this.n
+
+    return n[0]*(p[0] - c[0]) + n[1]*(p[1] - c[1]) + n[2]*(p[2] - c[2]) <= 0
+}
+
 plane.prototype.trace = function(r)
 {
     var s = r.dir
@@ -34,6 +42,13 @@ function axisplane(settings)
     this.axis = settings.axis || 2
     this.n = vec.e(this.axis)
     this.paxis = this.p[this.axis]
+}
+
+axisplane.prototype.inside = function(p)
+{
+    var i = this.axis
+
+    return p[i] - this.p[i] <= 0
 }
 
 axisplane.prototype.trace = function(r)

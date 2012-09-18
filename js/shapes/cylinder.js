@@ -8,6 +8,24 @@ function cylinder(settings)
     this.h = vec.len(vec.sub(this.b, this.a))
 }
 
+cylinder.prototype.inside = function(p)
+{
+    var a = this.a
+    var s = this.s
+    var h = s[0]*(p[0] - a[0]) + s[1]*(p[1] - a[1]) + s[2]*(p[2] - a[2])
+    
+    if (h < 0 || h > this.h)
+        return false
+
+    var q = [
+        a[0] + h*s[0] - p[0],
+        a[1] + h*s[1] - p[1],
+        a[2] + h*s[2] - p[2],
+    ]
+
+    return q[0]*q[0] + q[1]*q[1] + q[2]*q[2] - this.r2 <= 0
+}
+
 cylinder.prototype.trace = function(r)
 {
     var p = r.from

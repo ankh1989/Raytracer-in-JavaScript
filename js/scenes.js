@@ -273,7 +273,7 @@ scenes =
         var eye = m.vmul([0, 0, 5])
 
         var cam = new camera({
-            from:   [2, 3, 4],
+            from:   [4, 5, 6],
             to:     [0, 0, 0],
             w:      1,
             h:      1
@@ -287,7 +287,7 @@ scenes =
         var flake =
         {
             name:   'sphereflake',
-            n:      2
+            n:      3
         }
 
         var floor =
@@ -301,6 +301,116 @@ scenes =
         ({
             lights:     lights,
             objects:    [flake, floor],
+            camera:     cam
+        })
+    },
+
+    'CSG': function()
+    {
+        var cam = new camera
+        ({
+            from:   [2, 3, 4],
+            to:     [0, 0, 0],
+            w:      1,
+            h:      1
+        })
+
+        var lights =
+        [
+            {at:[-5, 9, 16], power:1},
+            {at:[0, 0, 0], power:1},
+        ]
+
+        var r = 3
+
+        var c1 = [1, 0, 0]
+        var c2 = [-1, 0, 0]
+
+        var sm = {name:'material', color:[1, 0, 0], refl:0.5, t:0.0, rc:1.5}
+
+        var ps = function(x, y, z)
+        {
+            var $ = function() { return 0.0*(Math.random() - 0.5) }
+            var c = [x + $(), y + $(), z + $()]
+            var n = [x + $(), y + $(), z + $()]
+            return {name:'object', material:sm, shape:{name:'plane', norm:n, center:c}}
+        }
+
+        var cyl = function(x, y, z)
+        {
+            var a = [x, y, z]
+            var b = [-x, -y, -z]
+            var r = 0.7
+
+            return {name:'object', material:sm, shape:{name:'cylinder', center1:a, center2:b, radius:r}}
+        }
+
+        var sph = function(x, y, z)
+        {
+            var c = [x, y, z]
+            var r = 0.5
+
+            return {name:'object', material:sm, shape:{name:'sphere', center:c, radius:r}}
+        }
+
+        var planes =
+        [
+            ps(+1, 0, 0),
+            ps(-1, 0, 0),
+            ps(0, +1, 0),
+            ps(0, -1, 0),
+            ps(0, 0, +1),
+            ps(0, 0, -1),
+        ]
+
+        var cylinders =
+        [
+            cyl(2, 0, 0),
+            cyl(0, 2, 0),
+            cyl(0, 0, 2),
+        ]
+
+        var spheres = 
+        [
+            sph(+1, +1, +1),
+            sph(+1, +1, -1),
+            sph(+1, -1, +1),
+            sph(+1, -1, -1),
+            sph(-1, +1, +1),
+            sph(-1, +1, -1),
+            sph(-1, -1, +1),
+            sph(-1, -1, -1),
+        ]
+
+        var cube = csg.and.apply(null, planes)
+        //var cube = {name:'object', shape:{name:'cube'}, material:sm}
+        var axes = csg.or.apply(null, cylinders)
+        var sphs = csg.or.apply(null, spheres)
+
+        var obj = csg.and(
+            cube,
+            csg.not(sphs),
+            csg.not(axes))
+
+        //var obj = cube
+
+        cube.bound = {name:'sphere', center:[0, 0, 0], radius:2}
+
+        var mx = (new m3x3(1)).rotate(1, -1).rotate(2, -0.1).rotate(1, 3)
+
+        obj.transform = {mx:mx.plain(), mp:[0, 0, 0]}
+
+        var floor =
+        {
+            name:       'object',
+            material:   {name:'material', color:{name:'checker', size:1}},
+            shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
+        }
+
+        return new scene
+        ({
+            lights:     lights,
+            objects:    [obj, floor],
             camera:     cam
         })
     }

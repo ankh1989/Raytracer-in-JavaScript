@@ -1,5 +1,10 @@
 vec = {}
 
+vec.clone = function(v)
+{
+    return [v[0], v[1], v[2]]
+}
+
 vec.all = function(x)
 {
     return [x, x, x]
@@ -75,6 +80,11 @@ vec.sub = function(a, b)
 vec.mul = function(f, a)
 {
     return [f * a[0], f * a[1], f * a[2]]
+}
+
+vec.addmul = function(v, f, w)
+{
+    return [v[0] + f*w[0], v[1] + f*w[1], v[2] + f*w[2]]
 }
 
 vec.sqrlen = function(a)

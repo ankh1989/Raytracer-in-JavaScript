@@ -5,6 +5,11 @@ function isosurf(settings)
     this.maxgrad    = settings.maxgrad
 }
 
+isosurf.prototype.inside = function(p)
+{
+    return this.f(p[0], p[1], p[2]) <= 0
+}
+
 isosurf.prototype.trace = function(r)
 {
     var hit0 = this.bound.trace(r)

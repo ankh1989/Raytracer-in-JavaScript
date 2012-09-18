@@ -6,6 +6,11 @@ function sphere(settings)
     this.ir     = 1/this.r
 }
 
+sphere.prototype.inside = function(p)
+{
+    return vec.sqrdist(p, this.c) <= this.r2
+}
+
 sphere.prototype.trace = function(r)
 {
     var a = r.from

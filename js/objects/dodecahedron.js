@@ -37,14 +37,14 @@ function dodecahedron(settings)
         })
     }
 
-    group.apply(this,
+    csg_union.apply(this,
     [{
         bound:      {name:'sphere', center:dcenter, radius:dradius + sphr},
         objects:    [].concat(spheres, cylinders)
     }])
 }
 
-dodecahedron.prototype = group.prototype
+dodecahedron.prototype = csg_union.prototype
 
 dodecahedron.getvertices = function()
 {

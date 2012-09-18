@@ -14,8 +14,8 @@ function m3x3(w)
             var s = Math.sin(w.rotate)
             var c = Math.cos(w.rotate)
 
-            var i = w.axis == 0 ? 1 : 0
-            var j = w.axis == 2 ? 1 : 2
+            var i = (w.axis + 2) % 3
+            var j = (w.axis + 1) % 3
 
             m3x3.apply(this, [1])
 

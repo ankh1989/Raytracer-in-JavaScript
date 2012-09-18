@@ -48,7 +48,7 @@ function sphereflake(args)
             var bi = scoords[i][1]
             var vi = m.vmul(sc2dc(ai, bi))
             var ci = vec.add(c, vec.mul(r + ri, vi))
-            var mi = (new m3x3(1)).rotate(1, -bi).rotate(2, ai).mul(m)
+            var mi = (new m3x3(1)).rotate(1, -bi).rotate(2, -ai).mul(m)
 
             objects.push
             ({
@@ -61,7 +61,7 @@ function sphereflake(args)
             })
         }
 
-    group.apply(this,
+    csg_union.apply(this,
     [{
         objects: objects,
         bound:
@@ -73,4 +73,4 @@ function sphereflake(args)
     }])
 }
 
-sphereflake.prototype = group.prototype
+sphereflake.prototype = csg_union.prototype

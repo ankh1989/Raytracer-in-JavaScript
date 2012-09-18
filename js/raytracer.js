@@ -1,6 +1,7 @@
 function raytracer(settings)
 {
     this.scene = settings.scene
+    this.union = new csg_union({objects:this.scene.objects})
 }
 
 raytracer.traceobj = function(r, obj)
@@ -30,34 +31,14 @@ raytracer.traceobj = function(r, obj)
     return hit
 }
 
-raytracer.trace = function(r, objects, min)
+raytracer.prototype.trace = function(r)
 {
-    var min = min || 0.0
-    var p
-
-    for (var i = 0; i < objects.length; i++)
-    {
-        var obj = objects[i]
-        var ep = raytracer.traceobj(r, obj)
-        
-        if (!ep) continue
-        
-        var d = ep.dist
-        
-        if (!p || d < p.dist && d > math.eps)
-        {
-            if (d < min) return
-            p = ep
-            p.owner = p.owner || obj
-        }
-    }
-
-    return p
+    return raytracer.traceobj(r, this.union)
 }
 
 raytracer.prototype.color = function(r)
 {
-    var hit = raytracer.trace(r, this.scene.objects)
+    var hit = this.trace(r)
     if (!hit) return this.scene.bgcolor
 
     var m = hit.owner.material
@@ -94,7 +75,7 @@ raytracer.prototype.diffuse = function(r, hit)
         dir[2] /= dist
 
         var lightray = new ray({from:light.at, dir:dir})
-        var q = raytracer.trace(lightray, this.scene.objects, dist - math.eps)
+        var q = this.trace(lightray)
         
         if (!q || vec.sqrdist(q.at, hit.at) > math.eps)
             continue
@@ -137,10 +118,13 @@ raytracer.prototype.reflection = function(r, hit)
     var p = hit.owner.material.reflection*r.power
     if (p < math.eps) return
 
+    var rd = vec.reflect(r.dir, hit.norm)
+    var np = vec.addmul(hit.at, math.eps, rd)
+
     var reflray = new ray
     ({
-        from:   hit.at,
-        dir:    vec.reflect(r.dir, hit.norm),
+        from:   np,
+        dir:    rd,
         power:  p
     })
 
@@ -152,13 +136,18 @@ raytracer.prototype.refraction = function(r, hit)
     var p = hit.owner.material.transparency*r.power
     if (p < math.eps) return
 
+    var rr = vec.refract(r.dir, hit.norm, hit.owner.material.refrcoeff)
+
+    if (!rr) return
+
+    var np = vec.addmul(hit.at, math.eps, rr)
+
     var refrray = new ray
     ({
-        from:   hit.at,
-        dir:    vec.refract(r.dir, hit.norm, hit.owner.material.refrcoeff),
+        from:   np,
+        dir:    rr,
         power:  p
     })
 
-    if (refrray.dir)
-        return this.color(refrray)
+    return this.color(refrray)
 }

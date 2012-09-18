@@ -8,15 +8,16 @@ function LoadScripts(load)
 
         'shapes/cylinder.js',
         'shapes/plane.js',
+        'shapes/cube.js',
         'shapes/sphere.js',
         'shapes/isosurf.js',
 
+        'objects/csg.js',
         'objects/object.js',
-        'objects/group.js',
         'objects/cubecyl.js',
         'objects/dodecahedron.js',
-        'objects/sphereflake.js',
-
+        'objects/sphereflake.js',        
+        
         'ray.js',
         'debug.js',
         'raytracer.js',

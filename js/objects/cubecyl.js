@@ -51,11 +51,11 @@ function cubecyl(opts)
         radius: vec.len(vec.sub(a, b))/2 + spr + math.eps
     }
 
-    group.apply(this,
+    csg_union.apply(this,
     [{
         objects:    objects,
         bound:      boundingsphere
     }])
 }
 
-cubecyl.prototype = group.prototype
+cubecyl.prototype = csg_union.prototype
