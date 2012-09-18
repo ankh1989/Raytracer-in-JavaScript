@@ -70,17 +70,19 @@ debug.isarray = function(obj)
 
 debug.tostr = function(obj, depth)
 {
-    var type = typeof obj
-
-    if (type == 'object' && (depth === undefined || depth > 0))
+    if (typeof obj == 'object' && (depth === undefined || depth > 0))
     {
         var str = ''
 
         for (var key in obj)
-            str = str + debug.tostr(key, depth - 1) + ':' + debug.tostr(obj[key], depth - 1) + ','
+            str = str + debug.tostr(key, depth - 1) + ':' + debug.tostr(obj[key], depth - 1) + ';'
 
         return '{' + str.substr(0, str.length - 1) + '}'
     }
+    else if (typeof obj == 'function')
+        return typeof obj
+    else if (typeof obj == 'number')
+        return Math.floor(obj*1000)/1000 + ''
     else
         return obj + ''
 }

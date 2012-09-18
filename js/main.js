@@ -366,8 +366,10 @@ function OnAllScriptsLoaded()
             raytracer:  new raytracer({scene:factory.deserialize(CreateSelectedScene())})
         })
 
-        var c = s.raycolor(event.x, event.y, 1)
-        console.log(c)
+        var x = 304 || event.x
+        var y = 305 || event.y
+        var c = s.raycolor(x, y, 1)
+        console.log('(' + x + ',' + y + ')=[' + c + ']')
     }
 
     initialize()

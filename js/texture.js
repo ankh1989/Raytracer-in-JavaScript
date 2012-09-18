@@ -27,3 +27,43 @@ checker.prototype.getcolor = function(at)
 
     return sum % 2 == 0 ? this.c : this.ic
 }
+
+function lines(options)
+{
+    options = options || {}
+    
+    var s = options.size
+    
+    if (isFinite(s))
+        s = vec.all(s)
+    else if (!s)
+        s = vec.all(1)
+    
+    var c = options.color || [0, 0, 0]
+    var ic = [1 - c[0], 1 - c[1], 1 - c[2]]
+
+    this.s = s
+    this.c = c
+    this.ic = ic
+}
+
+lines.prototype.getcolor = function(p)
+{
+    var dist = function(si, pi)
+    {
+        var spi = pi/si
+        var fi = spi - Math.floor(spi)
+        if (fi > 0.5) fi = 1.0 - fi
+        return fi*si
+    }
+
+    var min = function(a, b)
+    {
+        return a < b ? a : b
+    }
+
+    var s = this.s
+    var d = min(dist(s[0], p[0]), dist(s[1], p[1]), dist(s[2], p[2]))
+
+    return d < 0.03 ? this.c : this.ic
+}

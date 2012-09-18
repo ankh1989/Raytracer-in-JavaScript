@@ -15,7 +15,7 @@ raytracer.traceobj = function(r, obj)
 
     var rayst = new ray
     ({
-        from:   vec.add(vec.mx3x3.mulvm(r.from, st.imx), st.mp),
+        from:   vec.sub(vec.mx3x3.mulvm(r.from, st.imx), st.mp),
         dir:    vec.norm(vec.mx3x3.mulvm(r.dir, st.imx)),
         power:  r.power
     })
@@ -25,7 +25,7 @@ raytracer.traceobj = function(r, obj)
     if (!hit) return
 
     hit.norm    = vec.norm(vec.mx3x3.mulvm(hit.norm, st.mx))
-    hit.at      = vec.mx3x3.mulvm(vec.sub(hit.at, st.mp), st.mx)
+    hit.at      = vec.mx3x3.mulvm(vec.add(hit.at, st.mp), st.mx)
     hit.dist    = vec.dist(r.from, hit.at)
 
     return hit
@@ -47,7 +47,7 @@ raytracer.prototype.color = function(r)
     var refl = m.reflection
     var refr = m.transparency
 
-    var surfcol = this.diffuse(r, hit) || [0, 0, 0]
+    var surfcol = surf ? this.diffuse(r, hit) || [0, 0, 0] : [0, 0, 0]
     var reflcol = this.reflection(r, hit) || [0, 0, 0]
     var refrcol = this.refraction(r, hit) || [0, 0, 0]
     
@@ -94,11 +94,12 @@ raytracer.prototype.diffuse = function(r, hit)
         
         if (m.lambert > 0)
         {
-            var cos = -vec.dot(dir, hit.norm)
-            
-            if (cos > 0)
-                sumlight += light.power * m.lambert * cos
+            var cos = vec.dot(dir, hit.norm)
+            sumlight += light.power * m.lambert * Math.abs(cos)
         }
+
+        if (m.ambient > 0)
+            sumlight += light.power * m.ambient
     }
     
     var color = hit.owner.material.color

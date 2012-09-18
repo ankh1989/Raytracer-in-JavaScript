@@ -25,7 +25,7 @@ scenes =
         for (var i = 0, len = t.length; i < len; i++)
             t[i] = vec.sub(t[i], c)
         
-        var sm = function(c) { return {name:'material', refl:0.6, t:0.0, color:c} }
+        var sm = function(c) { return {name:'material', refl:0.6, t:0.0, rc:1.5, color:c} }
         var tc = {name:'checker', size:0.5}
         var pm = {name:'material', refl:0.0, color:tc}
 
@@ -95,7 +95,7 @@ scenes =
     {
         var sm = {name:'material', refl:0.4, color:[1, 0, 0]}
         var pc = {name:'checker', size:5}
-        var pm = {name:'material', refl:0.0, color:pc}
+        var pm = {name:'material', refl:0.5, rc:1.5, t:0.0, color:[1, 0, 0]}
 
         var f_ring = function(x, y, z)
         {
@@ -151,7 +151,7 @@ scenes =
 
         var cam = new camera
         ({
-            from:   [2.8, 3.4, 1.2],
+            from:   [2.8, 4.4, 2.2],
             to:     [0, 0, 0],
             w:      1,
             h:      1,
@@ -177,14 +177,21 @@ scenes =
             }
         }
 
+        var floor =
+        {
+            name:       'object',
+            material:   {name:'material', color:{name:'checker', size:1}, refl:0.5},
+            shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
+        }
+
         return new scene
         ({
             lights:
             [
-                {at:[0, 0, 0], power:2},
-                {at:cam.eye, power:1}
+                {at:[0, 0, 0], power:1},
+                {at:[1, 2, 20], power:1},
             ],
-            objects: [iso],
+            objects: [iso, floor],
             camera: cam,
         })
     },
@@ -412,6 +419,52 @@ scenes =
             lights:     lights,
             objects:    [obj, floor],
             camera:     cam
+        })
+    },
+
+    'Test': function()
+    {
+        var sphere =
+        {
+            name:       'object',
+            shape:      {name:'sphere', center:[0, 0, 2], radius:1},
+            material:   {name:'material', refl:0.2, rc:1.5, t:0.7, color:[1, 0, 0]}
+        }
+
+        var cube =
+        {
+            name:       'object',
+            shape:      {name:'cube'},
+            material:   {name:'material', color:[1, 0, 0], refl:0.5, rc:1.5, t:0.5},
+            transform:  {mx:new m3x3(1), mp:[0, 0, 1]}
+        }
+
+        var floor =
+        {
+            name:       'object',
+            material:   {name:'material', color:{name:'lines', size:1}},
+            shape:      {name:'axisplane', axis:2, center:[0, 0, 0]}
+        }
+
+        var cam = new camera
+        ({
+            from:   [3, 4, 3],
+            to:     [0, 0, 2],
+            w:      1,
+            h:      1
+        })
+
+        return new scene
+        ({
+            objects: [sphere, floor],
+            camera: cam,
+            bgcolor: [0.5, 0.5, 1.0],
+            lights:
+            [
+                {power:1, at:[-3, 10, 6]},
+                {power:1, at:[4, 10, 7]},
+                {power:1, at:[0, 0, 0.5]},
+            ]
         })
     }
 } // scenes
