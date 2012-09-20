@@ -61,7 +61,7 @@ function sphereflake(args)
             })
         }
 
-    csg_union.apply(this,
+    csg.union.apply(this,
     [{
         objects: objects,
         bound:
@@ -73,4 +73,4 @@ function sphereflake(args)
     }])
 }
 
-sphereflake.prototype = csg_union.prototype
+sphereflake.prototype = csg.union.prototype

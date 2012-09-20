@@ -1,7 +1,7 @@
 function raytracer(settings)
 {
     this.scene = settings.scene
-    this.union = new csg_union({objects:this.scene.objects})
+    this.union = new csg.union({objects:this.scene.objects})
 }
 
 raytracer.traceobj = function(r, obj)

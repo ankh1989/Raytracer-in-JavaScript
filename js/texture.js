@@ -1,4 +1,6 @@
-function checker(options)
+textures = {}
+
+textures.checker = function(options)
 {
     options = options || {}
     
@@ -17,7 +19,7 @@ function checker(options)
     this.ic = ic
 }
 
-checker.prototype.getcolor = function(at)
+textures.checker.prototype.getcolor = function(at)
 {
     var sum = 0
 
@@ -28,7 +30,7 @@ checker.prototype.getcolor = function(at)
     return sum % 2 == 0 ? this.c : this.ic
 }
 
-function lines(options)
+textures.lines = function(options)
 {
     options = options || {}
     
@@ -47,7 +49,7 @@ function lines(options)
     this.ic = ic
 }
 
-lines.prototype.getcolor = function(p)
+textures.lines.prototype.getcolor = function(p)
 {
     var dist = function(si, pi)
     {

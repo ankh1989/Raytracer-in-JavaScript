@@ -9,11 +9,13 @@
 
 var factory = {}
 
-factory.global = function(){return this}()
+factory.globals = function(){return this}()
+
+factory.constructors = []
 
 factory.create = function(settings)
 {
-    var ctor = factory.global[settings.name]
+    var ctor = factory.constructors[settings.name]
     if (!ctor) throw settings.name + " is not a ctor"
     return new ctor(settings)
 }
@@ -29,6 +31,33 @@ factory.deserialize = function(obj)
     for (var i in obj)
         obj[i] = factory.deserialize(obj[i])
 
-
-    return obj    
+    return obj
 }
+
+factory.register = function(name, ctor)
+{
+    if (factory.constructors[name])
+        throw "the ctor is already registered"
+    factory.constructors[name] = ctor
+}
+
+factory.register('axisplane',           axisplane)
+factory.register('plane',               plane)
+factory.register('sphere',              sphere)
+factory.register('cube',                cube)
+factory.register('cylinder',            cylinder)
+factory.register('isosurf',             isosurf)
+
+factory.register('material',            material)
+factory.register('checker',             textures.checker)
+factory.register('lines',               textures.lines)
+
+factory.register('object',              object)
+factory.register('cubecyl',             cubecyl)
+factory.register('dodecahedron',        dodecahedron)
+factory.register('sphereflake',         sphereflake)
+
+factory.register('csg.union',           csg.union)
+factory.register('csg.intersection',    csg.intersection)
+factory.register('csg.complement',      csg.complement)
+factory.register('csg.relcomplement',   csg.relcomplement)

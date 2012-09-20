@@ -123,7 +123,7 @@ csg.setop = function(op)
     }
 }
 
-csg_union = csg.ctor(function(es)
+csg.union = csg.ctor(function(es)
 {
     for (var i = 0; i < es.length; i++)
         if (es[i]) return true
@@ -131,7 +131,7 @@ csg_union = csg.ctor(function(es)
     return false
 })
 
-csg_intersection = csg.ctor(function(es)
+csg.intersection = csg.ctor(function(es)
 {
     for (var i = 0; i < es.length; i++)
         if (!es[i]) return false
@@ -139,17 +139,17 @@ csg_intersection = csg.ctor(function(es)
     return true
 })
 
-csg_complement = csg.ctor(function(es)
+csg.complement = csg.ctor(function(es)
 {
     return !es[0]
 })
 
-csg_relcomplement = csg.ctor(function(es)
+csg.relcomplement = csg.ctor(function(es)
 {
     return es[0] && !es[1]
 })
 
-csg.or  = csg.setop('csg_union')
-csg.and = csg.setop('csg_intersection')
-csg.not = csg.setop('csg_complement')
-csg.sub = csg.setop('csg_relcomplement')
+csg.or  = csg.setop('csg.union')
+csg.and = csg.setop('csg.intersection')
+csg.not = csg.setop('csg.complement')
+csg.sub = csg.setop('csg.relcomplement')
