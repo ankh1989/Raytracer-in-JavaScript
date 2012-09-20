@@ -10,6 +10,11 @@ vec.all = function(x)
     return [x, x, x]
 }
 
+vec.random = function()
+{
+    return [Math.random(), Math.random(), Math.random()]
+}
+
 vec.e = function(i)
 {
     var v = [0, 0, 0]

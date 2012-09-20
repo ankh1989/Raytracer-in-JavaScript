@@ -12,10 +12,11 @@ raytracer.traceobj = function(r, obj)
     var st = obj.transform
 
     st.imx = st.imx || vec.mx3x3.invm(st.mx)
+    st.mp = st.mp || [0, 0, 0]
 
     var rayst = new ray
     ({
-        from:   vec.sub(vec.mx3x3.mulvm(r.from, st.imx), st.mp),
+        from:   vec.mx3x3.mulvm(vec.sub(r.from, st.mp), st.imx),
         dir:    vec.norm(vec.mx3x3.mulvm(r.dir, st.imx)),
         power:  r.power
     })
@@ -25,7 +26,7 @@ raytracer.traceobj = function(r, obj)
     if (!hit) return
 
     hit.norm    = vec.norm(vec.mx3x3.mulvm(hit.norm, st.mx))
-    hit.at      = vec.mx3x3.mulvm(vec.add(hit.at, st.mp), st.mx)
+    hit.at      = vec.add(vec.mx3x3.mulvm(hit.at, st.mx), st.mp)
     hit.dist    = vec.dist(r.from, hit.at)
 
     return hit

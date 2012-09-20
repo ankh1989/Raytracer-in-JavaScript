@@ -24,6 +24,12 @@ function m3x3(w)
             this[j][i] = -s
             this[j][j] = +c
         }
+        else if (typeof w.xaxis == 'object')
+        {
+            this[0] = vec.norm(w.xaxis)
+            this[1] = vec.nrom(vec.cross(this[0], vec.random()))
+            this[2] = vec.norm(vec.cross(this[0], this[1]))
+        }
     }
 
     if (w == 'random')
