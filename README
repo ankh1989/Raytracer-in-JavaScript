@@ -3,7 +3,7 @@ This a multi-threaded raytracer written in JavaScript with HTML5 features. It's 
 Supported browsers:
 Chrome 21
 Firefox 15
-IE 10 (not tested)
+IE 10
 
 Note, that Chrome puts a security restriction that does not allow to run this raytracer from a local disk. To disable this restriction, run Chrome with an additional command line argument:
 
