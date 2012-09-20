@@ -27,7 +27,9 @@ function LoadScripts(load)
         'texture.js',
         'camera.js',
         'factory.js',
-        'screen.js'
+        'screen.js',
+        'shaders.js',
+        'rpoint.js',
     ]
 
     for (var i = 0; i < pathes.length; i++)

@@ -14,4 +14,6 @@ function material(args)
     this.transparency  = $('t', 0)
     this.surface       = 1 - this.reflection - this.transparency
     this.color         = args.color
+
+    this.shader = new shaders.phong({})
 }

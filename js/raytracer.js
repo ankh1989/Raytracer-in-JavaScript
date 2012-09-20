@@ -47,7 +47,7 @@ raytracer.prototype.color = function(r)
     var refl = m.reflection
     var refr = m.transparency
 
-    var surfcol = surf ? this.diffuse(r, hit) || [0, 0, 0] : [0, 0, 0]
+    var surfcol = this.diffuse(r, hit) || [0, 0, 0]
     var reflcol = this.reflection(r, hit) || [0, 0, 0]
     var refrcol = this.refraction(r, hit) || [0, 0, 0]
     
@@ -79,27 +79,9 @@ raytracer.prototype.diffuse = function(r, hit)
         
         if (!q || vec.sqrdist(q.at, hit.at) > math.eps)
             continue
-        
-        if (m.phong > 0)
-        {
-            var lr = vec.reflect(dir, hit.norm)
-            var vcos = -vec.dot(lr, r.dir)
-            
-            if (vcos > 0)
-            {
-                var phong = Math.pow(vcos, m.phongpower)
-                sumlight += light.power * m.phong * phong
-            }
-        }
-        
-        if (m.lambert > 0)
-        {
-            var cos = vec.dot(dir, hit.norm)
-            sumlight += light.power * m.lambert * Math.abs(cos)
-        }
 
-        if (m.ambient > 0)
-            sumlight += light.power * m.ambient
+        var rp = new rpoint({p:hit.at, v:r.dir, l:dir, n:hit.norm})
+        sumlight += light.power*m.shader.intensity(rp)
     }
     
     var color = hit.owner.material.color

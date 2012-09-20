@@ -35,18 +35,27 @@ screen.prototype.renderarea = function(xrange, yrange)
     for (var x = xrange[0]; x <= xrange[1]; x++)
     {
         var color = [0, 0, 0]
-                
-        for (var k = 0; k < this.aarays; k++)
+
+        if (this.aarays == 1)
         {
-            var xpos = x + Math.random(0, 1)
-            var ypos = y + Math.random(0, 1)
-            
-            var c = this.raycolor(xpos, ypos, f)
+            var c = this.raycolor(x, y, f)
 
             color[0] += c[0]
             color[1] += c[1]
             color[2] += c[2]
         }
+        else
+            for (var k = 0; k < this.aarays; k++)
+            {
+                var xpos = x + Math.random(0, 1)
+                var ypos = y + Math.random(0, 1)
+            
+                var c = this.raycolor(xpos, ypos, f)
+
+                color[0] += c[0]
+                color[1] += c[1]
+                color[2] += c[2]
+            }
 
         rgba[base + 0] = Math.floor(color[0] * f * 255)
         rgba[base + 1] = Math.floor(color[1] * f * 255)

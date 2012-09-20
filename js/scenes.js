@@ -64,14 +64,14 @@ scenes =
         ]
     
         var sm = {name:'material', refl:0.7, color:[0, 1, 0]}
-        var cm = {name:'material', refl:0.1, t:0.8, rc:1.2, color:[1, 0, 0]}
+        var cm = {name:'material', refl:0.8, color:[1, 0, 0]}
         var tc = {name:'checker', size:0.5}
         var pm = {name:'material', refl:0.5, color:tc}
-        var sr = 0.2
+        var sr = 0.5
     
         var objects = 
         [
-            {name:'object', shape:{name:'cubecyl', sphere:{r:sr, mat:sm}, cyl:{r:0.08, mat:cm}}},
+            {name:'object', shape:{name:'cubecyl', sphere:{r:sr, mat:sm}, cyl:{r:0.3, mat:cm}}},
             {name:'object', shape:{name:'axisplane', center:[0, 0, -1-sr], axis:2}, material:pm},
         ]
 
@@ -422,13 +422,89 @@ scenes =
         })
     },
 
+    'Pyramid': function()
+    {
+        var pcoord = function(i, j, k)
+        {
+            var s2 = Math.sqrt(2)
+            var s3 = Math.sqrt(3)
+
+            var t0 = [2, 0, 0]
+            var t1 = [1, s3, 0]
+            var t2 = [1, 1/s3, 2 * s2/s3]
+
+            return [
+                i*t0[0] + j*t1[0] + k*t2[0],
+                i*t0[1] + j*t1[1] + k*t2[1],
+                i*t0[2] + j*t1[2] + k*t2[2],
+            ]
+        }
+
+        var getcenters = function(n)
+        {
+            var c = []
+
+            for (var i = 0; i < n; i++)
+            for (var j = 0; j < n - i; j++)
+            for (var k = 0; k < n - i - j; k++)
+                c.push(pcoord(i, j, k))
+
+            return c
+        }
+
+        var newsphere = function(c)
+        {
+            return {
+                name:       'object',
+                shape:      {name:'sphere', center:c, radius:1},
+                material:   {name:'material', refl:0.0, rc:1.5, t:0.0, color:[1, 0, 0]}
+            }
+        }
+
+        var centers = getcenters(5)
+        var spheres = []
+
+        for (var i in centers)
+            spheres.push(newsphere(centers[i]))
+
+        var center = vec.average.apply(null, centers)
+        var cameye = vec.add(center, [10, 15, 12])
+
+        var floor =
+        {
+            name:       'object',
+            material:   {name:'material', color:{name:'lines', size:1}},
+            shape:      {name:'plane', norm:[0, 0, 1], center:[0, 0, -1]}
+        }
+
+        var cam = new camera
+        ({
+            from:   cameye,
+            to:     center,
+            w:      1,
+            h:      1
+        })
+
+        return new scene
+        ({
+            objects: [floor].concat(spheres),
+            camera: cam,
+            bgcolor: [0.5, 0.5, 1.0],
+            lights:
+            [
+                {power:0.8, at:[10, 100, 60]},
+                {power:0.2, at:cam.eye},
+            ]
+        })
+    },
+
     'Test': function()
     {
         var sphere =
         {
             name:       'object',
-            shape:      {name:'sphere', center:[0, 0, 2], radius:1},
-            material:   {name:'material', refl:0.2, rc:1.5, t:0.7, color:[1, 0, 0]}
+            shape:      {name:'sphere', center:[0, 0, 1], radius:1},
+            material:   {name:'material', refl:0.0, rc:1.5, t:0.0, color:[1, 0, 0]}
         }
 
         var cube =
@@ -462,8 +538,7 @@ scenes =
             lights:
             [
                 {power:1, at:[-3, 10, 6]},
-                {power:1, at:[4, 10, 7]},
-                {power:1, at:[0, 0, 0.5]},
+                //{power:1, at:[4, -10, 7]},
             ]
         })
     }
