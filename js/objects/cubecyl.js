@@ -52,7 +52,7 @@ function cubecyl(opts)
 
     csg.union.apply(this,
     [{
-        objects:    objects,
+        shapes:     objects,
         bound:      boundingsphere
     }])
 }

@@ -61,7 +61,7 @@ function sphereflake(args)
 
     csg.union.apply(this,
     [{
-        objects: objects,
+        shapes: objects,
         bound: new sphere
         ({
             center: c,

@@ -48,8 +48,7 @@ csg.tracer.prototype.trace = function(r)
 
 csg.tracer.prototype.getis = function(r, dist, objid)
 {
-    var s = this.shapes[objid]
-    var hit = raytracer.traceobj(r, s)
+    var hit = this.shapes[objid].trace(r)
     if (!hit) return
 
     hit.dist += dist

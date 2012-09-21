@@ -1,45 +1,12 @@
 function raytracer(settings)
 {
     this.scene = settings.scene
-    this.union = csg.or.apply(null, this.scene.objects)
-}
-
-raytracer.traceobj = function(r, obj)
-{
-    if (!obj.transform)
-        return obj.trace(r)
-
-    var st = obj.transform
-
-    st.imx = st.imx || vec.mx3x3.invm(st.mx)
-    st.mp = st.mp || [0, 0, 0]
-
-    var rayst = new ray
-    ({
-        from:   vec.mx3x3.mulvm(vec.sub(r.from, st.mp), st.imx),
-        dir:    vec.norm(vec.mx3x3.mulvm(r.dir, st.imx)),
-        power:  r.power
-    })
-
-    var hit = obj.trace(rayst)
-
-    if (!hit) return
-
-    hit.norm    = vec.norm(vec.mx3x3.mulvm(hit.norm, st.mx))
-    hit.at      = vec.add(vec.mx3x3.mulvm(hit.at, st.mx), st.mp)
-    hit.dist    = vec.dist(r.from, hit.at)
-
-    return hit
-}
-
-raytracer.prototype.trace = function(r)
-{
-    return raytracer.traceobj(r, this.union)
+    this.obj = csg.or.apply(null, this.scene.objects)
 }
 
 raytracer.prototype.color = function(r)
 {
-    var hit = this.trace(r)
+    var hit = this.obj.trace(r)
     if (!hit) return this.scene.bgcolor
 
     var m = hit.owner.material
@@ -76,7 +43,7 @@ raytracer.prototype.diffuse = function(r, hit)
         dir[2] /= dist
 
         var lightray = new ray({from:light.at, dir:dir})
-        var q = this.trace(lightray)
+        var q = this.obj.trace(lightray)
         
         if (!q || vec.sqrdist(q.at, hit.at) > math.eps)
             continue

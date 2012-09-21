@@ -417,8 +417,6 @@ scenes =
             csg.not(sphs),
             csg.not(axes))
 
-        cube.bound = new sphere({center:[0, 0, 0], radius:2})
-
         var floor = new object
         ({
             material:   new material({color:new textures.checker({size:1})}),

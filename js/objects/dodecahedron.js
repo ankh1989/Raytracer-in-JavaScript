@@ -38,7 +38,7 @@ function dodecahedron(settings)
     csg.union.apply(this,
     [{
         bound:      new sphere({center:dcenter, radius:dradius + sphr}),
-        objects:    [].concat(spheres, cylinders)
+        shapes:     [].concat(spheres, cylinders)
     }])
 }
 
