@@ -12,5 +12,7 @@ object.prototype.inside = function(p)
 
 object.prototype.trace = function(r)
 {
-    return this.shape.trace(r)
+    var h = this.shape.trace(r)
+    if (h) h.owner = h.owner || this
+    return h
 }

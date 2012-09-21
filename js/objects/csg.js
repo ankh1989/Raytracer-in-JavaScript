@@ -4,8 +4,7 @@ csg = {}
 
 csg.tracer = function(args)
 {
-    this.bound      = args.bound
-    this.objects    = args.objects
+    this.shapes     = args.shapes
     this.iis        = args.inside
 }
 
@@ -16,12 +15,9 @@ csg.tracer.prototype.inside = function(p)
 
 csg.tracer.prototype.trace = function(r)
 {
-    if (this.bound && !this.bound.inside(r.from) && !raytracer.traceobj(r, this.bound))
-        return
-
     var firstis = null
 
-    for (var i = 0; i < this.objects.length; i++)
+    for (var i = 0; i < this.shapes.length; i++)
     {
         var is = this.getis(r, 0, i)
         firstis = this.pushis(firstis, is)
@@ -41,7 +37,7 @@ csg.tracer.prototype.trace = function(r)
         if (this.iis(entered) != iis)
             return is.hit
 
-        var t = is.hit.dist - dist + math.eps
+        var t = is.hit.dist - dist + 1e-5
         ray.advance(t)
         dist += t
 
@@ -52,11 +48,10 @@ csg.tracer.prototype.trace = function(r)
 
 csg.tracer.prototype.getis = function(r, dist, objid)
 {
-    var obj = this.objects[objid]
-    var hit = raytracer.traceobj(r, obj)
+    var s = this.shapes[objid]
+    var hit = raytracer.traceobj(r, s)
     if (!hit) return
 
-    hit.owner = hit.owner || obj
     hit.dist += dist
 
     return {hit:hit, objid:objid}
@@ -89,8 +84,8 @@ csg.tracer.prototype.entered = function(p)
 {
     var entered = []
 
-    for (var i = 0; i < this.objects.length; i++)
-        entered[i] = this.objects[i].inside(p)
+    for (var i = 0; i < this.shapes.length; i++)
+        entered[i] = this.shapes[i].inside(p)
 
     return entered
 }
@@ -114,12 +109,12 @@ csg.op = function(op)
 {
     return function()
     {
-        var objects = []
+        var shapes = []
 
         for (var i = 0; i < arguments.length; i++)
-            objects[i] = arguments[i]
+            shapes[i] = arguments[i]
 
-        return new op({objects:objects})
+        return new op({shapes:shapes})
     }
 }
 

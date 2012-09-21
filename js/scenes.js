@@ -352,14 +352,14 @@ scenes =
         var c1 = [1, 0, 0]
         var c2 = [-1, 0, 0]
 
-        var sm = new material({color:[1, 0, 0], refl:0.5, t:0.0, rc:1.5})
+        var sm = new material({color:[1, 0, 0]})
 
         var ps = function(x, y, z)
         {
             var $ = function() { return 0.0*(Math.random() - 0.5) }
             var c = [x + $(), y + $(), z + $()]
             var n = [x + $(), y + $(), z + $()]
-            return new object({material:sm, shape:new plane({norm:n, center:c})})
+            return new plane({norm:n, center:c})
         }
 
         var cyl = function(x, y, z)
@@ -368,7 +368,7 @@ scenes =
             var b = [-x, -y, -z]
             var r = 0.7
 
-            return new object({material:sm, shape:new cylinder({center1:a, center2:b, radius:r})})
+            return new cylinder({center1:a, center2:b, radius:r})
         }
 
         var sph = function(x, y, z)
@@ -376,7 +376,7 @@ scenes =
             var c = [x, y, z]
             var r = 0.5
 
-            return new object({material:sm, shape:new sphere({center:c, radius:r})})
+            return new sphere({center:c, radius:r})
         }
 
         var planes =
@@ -412,21 +412,26 @@ scenes =
         var axes = csg.or.apply(null, cylinders)
         var sphs = csg.or.apply(null, spheres)
 
-        var obj = csg.and(
+        var composite = csg.and(
             cube,
             csg.not(sphs),
             csg.not(axes))
 
         cube.bound = new sphere({center:[0, 0, 0], radius:2})
 
-        var mx = (new m3x3(1)).rotate(1, -1).rotate(2, -0.1).rotate(1, 3)
-
-        obj.transform = {mx:mx.plain(), mp:[0, 0, 0]}
-
         var floor = new object
         ({
             material:   new material({color:new textures.checker({size:1})}),
             shape:      new axisplane({axis:2, center:[0, 0, -2]})
+        })
+
+        var mx = (new m3x3(1)).rotate(1, -1).rotate(2, -0.1).rotate(1, 3)
+
+        var obj = new object
+        ({
+            shape:      composite,
+            material:   sm,
+            transform:  {mx:mx.plain(), mp:[0, 0, 0]}
         })
 
         return new scene

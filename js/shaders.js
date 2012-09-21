@@ -10,7 +10,7 @@ shaders.lambert = function(args)
 shaders.lambert.prototype.intensity = function(rp)
 {
     var nl = -vec.dot(rp.n(), rp.l())
-    var d = this.cd*nl
+    var d = nl < 0 ? 0 : this.cd*nl
     return d
 }
 
@@ -31,8 +31,8 @@ shaders.phong.prototype.intensity = function(rp)
     var vr = -vec.dot(rp.v(), rp.r())
     var nl = -vec.dot(rp.n(), rp.l())
 
-    var s = vr <= 0 ? 0 : this.ks*this.cs*Math.pow(vr, this.e)
-    var d = this.kd*this.cd*nl
+    var s = vr < 0 ? 0 : this.ks*this.cs*Math.pow(vr, this.e)
+    var d = nl < 0 ? 0 : this.kd*this.cd*nl
 
     return s + d
 }
@@ -54,8 +54,8 @@ shaders.blinn.prototype.intensity = function(rp)
     var nh = -vec.dot(rp.n(), rp.h())
     var nl = -vec.dot(rp.n(), rp.l())
 
-    var s = nh <= 0 ? 0 : this.ks*this.cs*Math.pow(nh, this.e)
-    var d = this.kd*this.cd*nl
+    var s = nh < 0 ? 0 : this.ks*this.cs*Math.pow(nh, this.e)
+    var d = nl < 0 ? 0 : this.kd*this.cd*nl
 
     return s + d
 }
