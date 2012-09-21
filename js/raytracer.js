@@ -35,7 +35,7 @@ raytracer.prototype.diffuse = function(r, hit)
     var m = hit.owner.material
     if (!m.color) return
 
-    var sumlight = 0
+    var intensity = 0
     var lights = this.scene.lights
         
     for (var j = 0; j < lights.length; j++)
@@ -43,14 +43,12 @@ raytracer.prototype.diffuse = function(r, hit)
         var light = lights[j]
         var dir = vec.sub(hit.at, light.at)
         var dist = vec.len(dir)
-        
+
         dir[0] /= dist
         dir[1] /= dist
         dir[2] /= dist
 
-        var lightray = new ray({from:light.at, dir:dir})
-        var q = this.obj.trace(lightray)
-        
+        var q = this.obj.trace(new ray({from:light.at, dir:dir}))
         if (!q || vec.sqrdist(q.at, hit.at) > math.eps)
             continue
 
@@ -67,18 +65,18 @@ raytracer.prototype.diffuse = function(r, hit)
         var rp = new rpoint({p:hit.at, v:v, l:dir, n:n})
         var li = m.shader.intensity(rp)
         if (li < 0 || li > 1) throw "invalid light intensity"
-        sumlight += light.power*li
+        intensity += light.power*li
     }
-    
+
     var color = m.color
 
     if (color.getcolor)
         color = color.getcolor(hit.at)
 
     return [
-        sumlight*color[0],
-        sumlight*color[1],
-        sumlight*color[2]
+        intensity*color[0],
+        intensity*color[1],
+        intensity*color[2]
     ]
 }
 

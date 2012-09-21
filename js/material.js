@@ -4,8 +4,9 @@ function material(args)
         return new material
         ({
             rc:     1.5,
-            t:      0.5,
-            refl:   0.5
+            t:      0.4,
+            refl:   0.5,
+            color:  [0, 1, 0]
         })
     else if (args == 'mirror')
         return new material
