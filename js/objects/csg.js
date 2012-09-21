@@ -110,8 +110,11 @@ csg.op = function(op)
     {
         var shapes = []
 
-        for (var i = 0; i < arguments.length; i++)
-            shapes[i] = arguments[i]
+        if (arguments.length == 1 && isarray(arguments[0]))
+            shapes = arguments[0]
+        else
+            for (var i = 0; i < arguments.length; i++)
+                shapes[i] = arguments[i]
 
         return new op({shapes:shapes})
     }

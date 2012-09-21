@@ -88,8 +88,11 @@ scenes =
     {
         var lights =
         [
-            {at:[7, 8, 9],          power:2},
-            {at:[-0.9, 0.8, 0.9],   power:2},
+            {power:1, at:[5, 5, 5]},
+            {power:1, at:[-5, 5, 5]},
+            {power:1, at:[5, -5, 5]},
+            {power:1, at:[-5, -5, 5]},
+            {power:1, at:[0, 0, 0]},
         ]
     
         var sm = new material({refl:0.7, color:[0, 1, 0]})
@@ -97,10 +100,12 @@ scenes =
         var tc = new textures.checker({size:0.5})
         var pm = new material({refl:0.5, color:tc})
         var sr = 0.5
+
+        var cc = new cubecyl({sphere:{r:sr, mat:sm}, cyl:{r:0.3, mat:cm}})
     
         var objects = 
         [
-            new cubecyl({sphere:{r:sr, mat:sm}, cyl:{r:0.3, mat:cm}}),
+            new object({shape:cc, material:new material({color:[1, 1, 1], rc:1.5, t:0.5, refl:0.5})}),
             new object({shape:new axisplane({center:[0, 0, -1-sr], axis:2}), material:pm}),
         ]
 
@@ -221,8 +226,11 @@ scenes =
     'Dodecahedron': function()
     {
         var lights = [
-            {at:[0, 0, 0], power:1},
-            {at:[5, 6, 7], power:1},
+            {power:1, at:[5, 5, 5]},
+            {power:1, at:[-5, 5, 5]},
+            {power:1, at:[5, -5, 5]},
+            {power:1, at:[-5, -5, 5]},
+            {power:1, at:[0, 0, 0]},
         ]
 
         var cam = new camera({
@@ -237,6 +245,11 @@ scenes =
 
         var dc = new object
         ({
+            material: new material
+            ({
+                color: [1, 0, 0],
+                refl: 0.5
+            }),
             shape: new dodecahedron
             ({
                 spheres:    {radius:0.2, material:sphm},

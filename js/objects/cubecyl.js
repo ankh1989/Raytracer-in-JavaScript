@@ -7,12 +7,9 @@ function cubecyl(opts)
 
     var a = opts.a || vec.all(-1)
     var b = opts.b || vec.all(1)
-    
+
     var cylr = opts.cyl.r || 0.06
-    var cylm = opts.cyl.mat || {name:'material'}
-    
     var spr = opts.sphere.r || 0.1
-    var spm = opts.sphere.mat || {name:'material'}
     
     var coords = function(i)
     {
@@ -32,7 +29,7 @@ function cubecyl(opts)
     {
         var pi = coords(i)
         var sph = new sphere({center:pi, radius:spr})
-        objects.push(new object({shape:sph, material:spm}))
+        objects.push(sph)
     
         for (var ii = 0; ii < 3; ii++)
             if ((i & (1 << ii)) == 0)
@@ -40,19 +37,17 @@ function cubecyl(opts)
                 var j = i | (1 << ii)
                 var pj = coords(j)
                 var cyl = new cylinder({center1:pi, center2:pj, radius:cylr})
-                objects.push(new object({shape:cyl, material:cylm}))
+                objects.push(cyl)
             }
     }
 
-    object.apply(this,
-    [{
-        shape: new group(objects),
+    return new bounded
+    ({
+        shape: csg.or(objects),
         bound: new sphere
         ({
             center: vec.average(a, b),
             radius: vec.len(vec.sub(a, b))/2 + spr + math.eps
         })
-    }])
+    })
 }
-
-cubecyl.prototype = object.prototype

@@ -1,8 +1,6 @@
 function dodecahedron(settings)
 {
-    var sphm = settings.spheres.material
     var sphr = settings.spheres.radius
-    var cylm = settings.cylinders.material
     var cylr = settings.cylinders.radius
 
     var vertices = dodecahedron.getvertices()
@@ -13,11 +11,7 @@ function dodecahedron(settings)
     var spheres = []
 
     for (var i in vertices)
-        spheres.push(new object
-        ({
-            material:   sphm,
-            shape:      new sphere({center:vertices[i], radius:sphr})
-        }))
+        spheres.push(new sphere({center:vertices[i], radius:sphr}))
 
     var cylinders = []
     var neighbors = dodecahedron.getneighbors(vertices)
@@ -28,25 +22,19 @@ function dodecahedron(settings)
         var ci = vertices[i]
         var cj = vertices[neighbors[i][j]]
 
-        cylinders.push(new object
-        ({
-            material:   cylm,
-            shape:      new cylinder({center1:ci, center2:cj, radius:cylr})
-        }))
+        cylinders.push(new cylinder({center1:ci, center2:cj, radius:cylr}))
     }
 
-    object.apply(this,
-    [{
-        shape: new group([].concat(spheres, cylinders)),
+    return new bounded
+    ({
+        shape: csg.or([].concat(spheres, cylinders)),
         bound: new sphere
         ({
             center: dcenter,
             radius: dradius + sphr
         })
-    }])
+    })
 }
-
-dodecahedron.prototype = object.prototype
 
 dodecahedron.getvertices = function()
 {

@@ -57,6 +57,8 @@ function sphereflake(args)
 
     return new bounded
     ({
+        // As long as spheres do not intersect each other,
+        // "group" can be used instead of "csg.union".
         shape: new group(objects),
         bound: new sphere
         ({
@@ -65,5 +67,3 @@ function sphereflake(args)
         })
     })
 }
-
-sphereflake.prototype = bounded.prototype

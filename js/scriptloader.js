@@ -2,6 +2,8 @@ function LoadScripts(load)
 {
     var pathes =
     [
+        'utils.js',
+
         'math/math.js',
         'math/vector.js',
         'math/m3x3.js',
