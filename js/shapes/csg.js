@@ -94,7 +94,6 @@ csg.ctor = function(iis)
     var ctor = function(args)
     {
         args.inside = iis
-        this.transform = args.transform
         this.tracer = new csg.tracer(args)
     }
 

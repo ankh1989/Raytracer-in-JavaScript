@@ -10,6 +10,7 @@ function LoadScripts(load)
         'math/transform.js',
 
         'shapes/bounded.js',
+        'shapes/transformed.js',
         'shapes/cylinder.js',
         'shapes/plane.js',
         'shapes/cube.js',

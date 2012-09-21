@@ -195,13 +195,16 @@ scenes =
 
         var iso = new object
         ({
-            transform:  new transform(mt),
             material:   pm,
-            shape: new isosurf
+            shape: new transformed
             ({
-                f:      f_rings + '',
-                bound:  isobound,
-                maxgrad:150
+                transform:  new transform(mt),
+                shape: new isosurf
+                ({
+                    f:      f_rings + '',
+                    bound:  isobound,
+                    maxgrad:150
+                })
             })
         })
 
@@ -442,9 +445,12 @@ scenes =
 
         var obj = new object
         ({
-            shape:      composite,
-            material:   new material([1, 0, 0]),
-            transform:  new transform(mx)
+            shape: new transformed
+            ({
+                shape:      composite,
+                transform:  new transform(mx)
+            }),
+            material: new material([1, 0, 0])
         })
 
         return new scene
@@ -541,32 +547,57 @@ scenes =
         var cb = new object
         ({
             shape:      new cube({}),
-            material:   new material([1, 0, 0]),
-            transform:  new transform([-3, -1, 1])
+            material:   new material([1, 0, 0])
+        })
+
+        var cyl = function(r, h)
+        {
+            return new cylinder({center1:[0, 0, 0], center2:[0, 0, h], radius:r})
+        }
+
+        var window = new transformed
+        ({
+            shape: cb,
+            transform: new transform
+            ({
+                m: new m3x3(0.3),
+                p: [-1, 0, 0.5]
+            })
+        })
+
+        var obj = new object
+        ({
+            material: new material([1, 1, 1]),
+            shape: csg.and
+            (
+                cyl(1, 1),
+                csg.not(cyl(0.9, 1.1)),
+                csg.not(window)
+            )
         })
 
         var floor = new object
         ({
-            material:   new material({color:new textures.lines({size:1})}),
+            material:   new material([1, 1, 1]),
             shape:      new axisplane({axis:2, center:[0, 0, 0]})
         })
 
         var cam = new camera
         ({
-            from:   [3, 4, 3],
-            to:     [0, 0, 2],
+            from:   [2, 3, 4],
+            to:     [0, 0, 1],
             w:      1,
             h:      1
         })
 
         return new scene
         ({
-            objects: [sph, cb, floor],
+            objects: [obj, floor],
             camera: cam,
-            bgcolor: [0.5, 0.5, 1.0],
+            //bgcolor: [0.5, 0.5, 1.0],
             lights:
             [
-                {power:1, at:[-3, 10, 6]},
+                {power:1, at:[-5, 0, 10]},
                 //{power:1, at:[4, -10, 7]},
             ]
         })
