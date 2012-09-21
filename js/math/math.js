@@ -2,6 +2,11 @@ math = {}
 
 math.eps = 0.001
 
+math.nnmin = function(a, b)
+{
+    return a > b ? math.nnmin(b, a) : a < 0 ? b : a
+}
+
 math.samesign = function(a, b)
 {
     return a <= 0 && b <= 0 || a >= 0 && b >= 0

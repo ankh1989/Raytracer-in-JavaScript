@@ -356,11 +356,14 @@ scenes =
 
         var lights =
         [
+            /*
             {power:0.5, at:[5, 5, 5]},
             {power:0.5, at:[-5, 5, 5]},
             {power:0.5, at:[5, -5, 5]},
             {power:0.5, at:[-5, -5, 5]},
             {power:0.5, at:[0, 0, 0]},
+            */
+            {power:1, at:cam.eye}
         ]
 
         var r = 3
@@ -424,15 +427,12 @@ scenes =
             sph(-1, -1, -1),
         ]
 
-        var cb = csg.and(planes)
-        //var cb = new cube()
-        var axes = csg.or(cylinders)
-        var sphs = csg.or(spheres)
-
-        var composite = csg.and(
-            cb,
-            csg.not(sphs),
-            csg.not(axes))
+        var composite = csg.and
+        (
+            new cube(),
+            csg.not(csg.or(spheres)),
+            csg.not(csg.or(cylinders))
+        )
 
         var floor = new object
         ({

@@ -36,11 +36,12 @@ cube.prototype.traceaxis = function(r, i, h)
 
     if (s[i] == 0) return
 
-    var tp = (+1 - p[i])/s[i]
-    var tn = (-1 - p[i])/s[i]
+    var t = math.nnmin
+    (
+        (+1 - p[i])/s[i],
+        (-1 - p[i])/s[i]
+    )
 
-    var t = tp
-    if (t < 0 || tn < t) t = tn
     if (t < 0) return
 
     if (h.norm && t >= h.dist)
