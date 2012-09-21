@@ -105,7 +105,7 @@ scenes =
     
         var objects = 
         [
-            new object({shape:cc, material:new material({color:[1, 1, 1], rc:1.5, t:0.5, refl:0.5})}),
+            new object({shape:cc, material:new material('glass')}),
             new object({shape:new axisplane({center:[0, 0, -1-sr], axis:2}), material:pm}),
         ]
 
@@ -274,7 +274,7 @@ scenes =
     {
         var sph = function(s, c)
         {
-            return new object({shape:new sphere({center:s, radius:1}), material:new material({color:c})})
+            return new object({shape:new sphere({center:s, radius:1}), material:new material(c)})
         }
 
         var objects =
@@ -327,7 +327,7 @@ scenes =
         var flake = new object
         ({
             shape: new sphereflake({n:4}),
-            material: new material({color:[1, 1, 1]})
+            material: new material([1, 1, 1])
         })
 
         var floor = new object
@@ -365,7 +365,7 @@ scenes =
         var c1 = [1, 0, 0]
         var c2 = [-1, 0, 0]
 
-        var sm = new material({color:[1, 0, 0]})
+        var sm = new material([1, 0, 0])
 
         var ps = function(x, y, z)
         {
@@ -488,7 +488,7 @@ scenes =
             return new object
             ({
                 shape:      new sphere({center:c, radius:1}),
-                material:   new material({refl:0.0, rc:1.5, t:0.0, color:[1, 0, 0]})
+                material:   new material([1, 0, 0])
             })
         }
 
@@ -533,13 +533,13 @@ scenes =
         var sph = new object
         ({
             shape:      new sphere({center:[0, 0, 1], radius:1}),
-            material:   new material({refl:0.0, rc:1.5, t:0.0, color:[1, 0, 0]})
+            material:   new material([1, 0, 0])
         })
 
         var cb = new object
         ({
             shape:      new cube({}),
-            material:   new material({color:[1, 0, 0]}),
+            material:   new material([1, 0, 0]),
             transform:  new transform([-3, -1, 1])
         })
 

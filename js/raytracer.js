@@ -33,6 +33,8 @@ raytracer.prototype.color = function(r)
 raytracer.prototype.diffuse = function(r, hit)
 {
     var m = hit.owner.material
+    if (!m.color) return
+
     var sumlight = 0
     var lights = this.scene.lights
         
@@ -56,7 +58,7 @@ raytracer.prototype.diffuse = function(r, hit)
         sumlight += light.power*m.shader.intensity(rp)
     }
     
-    var color = hit.owner.material.color
+    var color = m.color
 
     if (color.getcolor)
         color = color.getcolor(hit.at)
