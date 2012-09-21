@@ -5,6 +5,7 @@ function LoadScripts(load)
         'math/math.js',
         'math/vector.js',
         'math/m3x3.js',
+        'math/transform.js',
 
         'shapes/cylinder.js',
         'shapes/plane.js',

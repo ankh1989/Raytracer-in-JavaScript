@@ -16,33 +16,26 @@ object.prototype.trace = function(r)
     if (this.bound && !this.bound.inside(r.from) && !this.bound.trace(r))
         return
 
-    var st = this.transform
     var rayst = r
 
-    if (st)
-    {
-        st.imx = st.imx || vec.mx3x3.invm(st.mx)
-        st.mp = st.mp || [0, 0, 0]
-
+    if (this.transform)
         rayst = new ray
         ({
-            from:   vec.mx3x3.mulvm(vec.sub(r.from, st.mp), st.imx),
-            dir:    vec.norm(vec.mx3x3.mulvm(r.dir, st.imx)),
+            from:   this.transform.ipt(r.from),
+            dir:    this.transform.idt(r.dir),
             power:  r.power
         })
-    }
 
     var hit = this.shape.trace(rayst)
     if (!hit) return
+    if (!hit.owner) hit.owner = this
 
-    if (st)
+    if (this.transform)
     {
-        hit.norm    = vec.norm(vec.mx3x3.mulvm(hit.norm, st.mx))
-        hit.at      = vec.add(vec.mx3x3.mulvm(hit.at, st.mx), st.mp)
+        hit.norm    = this.transform.fdt(hit.norm)
+        hit.at      = this.transform.fpt(hit.at)
         hit.dist    = vec.dist(r.from, hit.at)
     }
-
-    hit.owner = hit.owner || this
 
     return hit
 }

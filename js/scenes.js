@@ -186,15 +186,11 @@ scenes =
             h:      1,
         })
 
-        var mt =
-        {
-            mx: (new m3x3(1)).stretch(0, 1.5).stretch(1, 1.5).plain(),
-            mp: [0, 0, 0]
-        }
+        var mt = (new m3x3(1)).stretch(0, 1.5).stretch(1, 1.5)
 
         var iso = new object
         ({
-            transform:  mt,
+            transform:  new transform(mt),
             material:   pm,
             shape: new isosurf
             ({
@@ -429,7 +425,7 @@ scenes =
         ({
             shape:      composite,
             material:   sm,
-            transform:  {mx:mx.plain(), mp:[0, 0, 0]}
+            transform:  new transform(mx)
         })
 
         return new scene
@@ -526,8 +522,8 @@ scenes =
         var cb = new object
         ({
             shape:      new cube({}),
-            material:   new material({color:[1, 0, 0], refl:0.5, rc:1.5, t:0.5}),
-            transform:  {mx:new m3x3(1), mp:[0, 0, 1]}
+            material:   new material({color:[1, 0, 0]}),
+            transform:  new transform([-3, -1, 1])
         })
 
         var floor = new object
@@ -546,7 +542,7 @@ scenes =
 
         return new scene
         ({
-            objects: [sph, floor],
+            objects: [sph, cb, floor],
             camera: cam,
             bgcolor: [0.5, 0.5, 1.0],
             lights:

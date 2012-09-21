@@ -44,7 +44,7 @@ function cubecyl(opts)
             }
     }
 
-    var boundingsphere = new sphere
+    var bound = new sphere
     ({
         center: vec.average(a, b),
         radius: vec.len(vec.sub(a, b))/2 + spr + math.eps
@@ -53,7 +53,7 @@ function cubecyl(opts)
     csg.union.apply(this,
     [{
         shapes:     objects,
-        bound:      boundingsphere
+        bound:      bound
     }])
 }
 
