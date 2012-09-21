@@ -356,12 +356,14 @@ scenes =
 
         var lights =
         [
+            /*
             {power:0.5, at:[5, 5, 5]},
             {power:0.5, at:[-5, 5, 5]},
             {power:0.5, at:[5, -5, 5]},
             {power:0.5, at:[-5, -5, 5]},
+            */
             {power:0.5, at:[0, 0, 0]},
-            {power:1, at:cam.eye}
+            {power:0.5, at:[3, 4, 2]}
         ]
 
         var r = 3
@@ -441,7 +443,7 @@ scenes =
         var obj = new object
         ({
             shape:      composite,
-            material:   new material('glass'),
+            material:   new material([1, 0, 0]),
             transform:  new transform(mx)
         })
 

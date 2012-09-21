@@ -84,6 +84,7 @@ function OnAllScriptsLoaded()
     map.Render = function()
     {
         map.starttime = map.time()
+        map.totalrays = 0
         map.CreateCells()
         map.CreateThreadStates()
         map.StartThreads()
@@ -206,8 +207,10 @@ function OnAllScriptsLoaded()
         {
             if (event.data.rgba)
                 map.OnRendererFinished(event)
-            else if (event.data.maxgrad)
+            if (event.data.maxgrad)
                 map.OnMaxGradUpdated(event)
+            if (event.data.totalrays)
+                map.OnTotalRaysUpdated(event.data.totalrays)
         }
         else
             log("unknown event from " + event.target.id)
@@ -228,6 +231,11 @@ function OnAllScriptsLoaded()
         map.maxgrad = map.maxgrad || 0.0
         if (event.data.maxgrad > map.maxgrad)
             map.maxgrad = event.data.maxgrad
+    }
+
+    map.OnTotalRaysUpdated = function(n)
+    {
+        map.totalrays = (map.totalrays || 0) + n
     }
 
     map.OnCellRendered = function(thread)
@@ -254,12 +262,14 @@ function OnAllScriptsLoaded()
         map.context.shadowColor = 'rgba(0, 255, 0, 0.7)'
 
         var duration = map.time() - map.starttime
-        var rps = Math.floor(1000 * map.aarays * map.width * map.height / duration)
+        var nrays = map.totalrays
+        var rps = Math.floor(1000 * nrays / duration)
 
         map.context.fillText(rps + ' RPS', 10, 5)
         disable(false)
 
         console.log(map.width + 'x' + map.height + ' rendered for ' + duration + 'ms')
+        console.log('Rays traced: ' + map.totalrays)
 
         if (map.maxgrad)
             console.log('maxgrad=' + map.maxgrad)

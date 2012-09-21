@@ -27,13 +27,14 @@ function ReadRenderSettings(data)
     self.area = data.area
 
     var scene = scenes[data.scenename]()
+    self.rt = new raytracer({scene:scene})
 
     self.screen = new screen
     ({
         width:      data.screen.width,
         height:     data.screen.height,
         aarays:     data.settings.aarays,
-        raytracer:  new raytracer({scene:scene})
+        raytracer:  self.rt
     })
 }
 
@@ -44,6 +45,6 @@ function render()
         [self.area.xmin, self.area.xmax],
         [self.area.ymin, self.area.ymax])
 
-    postMessage({maxgrad:math.findroot.maxgrad})
+    postMessage({maxgrad:math.findroot.maxgrad, totalrays:self.rt.totalrays})
     postMessage({rgba:rgba})
 }
