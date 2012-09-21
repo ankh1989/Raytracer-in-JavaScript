@@ -13,12 +13,11 @@ function dodecahedron(settings)
     var spheres = []
 
     for (var i in vertices)
-        spheres.push
+        spheres.push(new object
         ({
-            name:       'object',
             material:   sphm,
-            shape:      {name:'sphere', center:vertices[i], radius:sphr}
-        })
+            shape:      new sphere({center:vertices[i], radius:sphr})
+        }))
 
     var cylinders = []
     var neighbors = dodecahedron.getneighbors(vertices)
@@ -29,17 +28,16 @@ function dodecahedron(settings)
         var ci = vertices[i]
         var cj = vertices[neighbors[i][j]]
 
-        cylinders.push
+        cylinders.push(new object
         ({
-            name:       'object',
             material:   cylm,
-            shape:      {name:'cylinder', center1:ci, center2:cj, radius:cylr}
-        })
+            shape:      new cylinder({center1:ci, center2:cj, radius:cylr})
+        }))
     }
 
     csg.union.apply(this,
     [{
-        bound:      {name:'sphere', center:dcenter, radius:dradius + sphr},
+        bound:      new sphere({center:dcenter, radius:dradius + sphr}),
         objects:    [].concat(spheres, cylinders)
     }])
 }

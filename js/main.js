@@ -173,7 +173,7 @@ function OnAllScriptsLoaded()
 
         renderer.postMessage
         ({
-            scene: map.scene,
+            scenename: GetSelectedSceneName(),
 
             screen: {
                 width:     map.width,
@@ -322,9 +322,14 @@ function OnAllScriptsLoaded()
         }
     }
 
+    function GetSelectedSceneName()
+    {
+        return $('scene').options[$('scene').selectedIndex].text
+    }
+
     function CreateSelectedScene()
     {
-        var name = $('scene').options[$('scene').selectedIndex].text
+        var name = GetSelectedSceneName()
         return scenes[name]()
     }
 
@@ -363,7 +368,7 @@ function OnAllScriptsLoaded()
             width:      $('canvas').width,
             height:     $('canvas').height,
             aarays:     1,
-            raytracer:  new raytracer({scene:factory.deserialize(CreateSelectedScene())})
+            raytracer:  new raytracer({scene:CreateSelectedScene()})
         })
 
         var x = event.x

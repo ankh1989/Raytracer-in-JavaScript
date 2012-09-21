@@ -110,7 +110,7 @@ csg.ctor = function(iis)
     return ctor
 }
 
-csg.setop = function(op)
+csg.op = function(op)
 {
     return function()
     {
@@ -119,7 +119,7 @@ csg.setop = function(op)
         for (var i = 0; i < arguments.length; i++)
             objects[i] = arguments[i]
 
-        return {name:op, objects:objects}
+        return new op({objects:objects})
     }
 }
 
@@ -149,7 +149,7 @@ csg.relcomplement = csg.ctor(function(es)
     return es[0] && !es[1]
 })
 
-csg.or  = csg.setop('csg.union')
-csg.and = csg.setop('csg.intersection')
-csg.not = csg.setop('csg.complement')
-csg.sub = csg.setop('csg.relcomplement')
+csg.or  = csg.op(csg.union)
+csg.and = csg.op(csg.intersection)
+csg.not = csg.op(csg.complement)
+csg.sub = csg.op(csg.relcomplement)

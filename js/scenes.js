@@ -25,18 +25,47 @@ scenes =
         for (var i = 0, len = t.length; i < len; i++)
             t[i] = vec.sub(t[i], c)
         
-        var sm = function(c) { return {name:'material', refl:0.6, t:0.0, rc:1.5, color:c} }
-        var tc = {name:'checker', size:0.5}
-        var pm = {name:'material', refl:0.0, color:tc}
+        var tc = new textures.checker({size:0.5})
+        var pm = new material({color:tc})
 
-        var objects = 
+        var newsphere = function(c, color)
+        {
+            return new object
+            ({
+                shape: new sphere
+                ({
+                    center: c,
+                    radius: 1
+                }),
+                material: new material
+                ({
+                    refl:   0.6,
+                    color:  color
+                })
+            })
+        }
+
+        var newfloor = function(z)
+        {
+            return new object
+            ({
+                shape: new axisplane
+                ({
+                    center: [0, 0, z],
+                    axis:   2
+                }),
+                material: pm
+            })
+        }
+
+        var objects =
         [
-            {name:'object', shape:{name:'sphere', center:t[0], radius:1}, material:sm([1, 1, 0])},
-            {name:'object', shape:{name:'sphere', center:t[1], radius:1}, material:sm([1, 0, 0])},
-            {name:'object', shape:{name:'sphere', center:t[2], radius:1}, material:sm([0, 1, 0])},
-            {name:'object', shape:{name:'sphere', center:t[3], radius:1}, material:sm([0, 1, 1])},
+            newsphere(t[0], [1, 1, 0]),
+            newsphere(t[1], [1, 0, 0]),
+            newsphere(t[2], [0, 1, 0]),
+            newsphere(t[3], [0, 1, 1]),
 
-            {name:'object', shape:{name:'axisplane', center:[0, 0, -1], axis:2}, material:pm},
+            newfloor(-1),
         ]
 
         var cam = new camera
@@ -63,16 +92,16 @@ scenes =
             {at:[-0.9, 0.8, 0.9],   power:2},
         ]
     
-        var sm = {name:'material', refl:0.7, color:[0, 1, 0]}
-        var cm = {name:'material', refl:0.8, color:[1, 0, 0]}
-        var tc = {name:'checker', size:0.5}
-        var pm = {name:'material', refl:0.5, color:tc}
+        var sm = new material({refl:0.7, color:[0, 1, 0]})
+        var cm = new material({refl:0.8, color:[1, 0, 0]})
+        var tc = new textures.checker({size:0.5})
+        var pm = new material({refl:0.5, color:tc})
         var sr = 0.5
     
         var objects = 
         [
-            {name:'object', shape:{name:'cubecyl', sphere:{r:sr, mat:sm}, cyl:{r:0.3, mat:cm}}},
-            {name:'object', shape:{name:'axisplane', center:[0, 0, -1-sr], axis:2}, material:pm},
+            new cubecyl({sphere:{r:sr, mat:sm}, cyl:{r:0.3, mat:cm}}),
+            new object({shape:new axisplane({center:[0, 0, -1-sr], axis:2}), material:pm}),
         ]
 
         var cam = new camera
@@ -93,9 +122,9 @@ scenes =
 
     'Isosurface': function()
     {
-        var sm = {name:'material', refl:0.4, color:[1, 0, 0]}
-        var pc = {name:'checker', size:5}
-        var pm = {name:'material', refl:0.5, rc:1.5, t:0.0, color:[1, 0, 0]}
+        var sm = new material({refl:0.4, color:[1, 0, 0]})
+        var pc = new textures.checker({size:5})
+        var pm = new material({refl:0.5, rc:1.5, t:0.0, color:[1, 0, 0]})
 
         var f_ring = function(x, y, z)
         {
@@ -147,7 +176,7 @@ scenes =
             return tx*ty*tz - r
         }
 
-        var isobound = {name:'sphere', center:[0, 0, 0], radius:1.5}
+        var isobound = new sphere({center:[0, 0, 0], radius:1.5})
 
         var cam = new camera
         ({
@@ -163,26 +192,23 @@ scenes =
             mp: [0, 0, 0]
         }
 
-        var iso =
-        {
-            name:       'object',
+        var iso = new object
+        ({
             transform:  mt,
             material:   pm,
-            shape:
-            {
-                name:   'isosurf',
+            shape: new isosurf
+            ({
                 f:      f_rings + '',
                 bound:  isobound,
                 maxgrad:150
-            }
-        }
+            })
+        })
 
-        var floor =
-        {
-            name:       'object',
-            material:   {name:'material', color:{name:'checker', size:1}, refl:0.5},
-            shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
-        }
+        var floor = new object
+        ({
+            material:   new material({color:new textures.checker({size:1}), refl:0.5}),
+            shape:      new axisplane({axis:2, center:[0, 0, -2]})
+        })
 
         return new scene
         ({
@@ -210,29 +236,27 @@ scenes =
             h:      1
         })
 
-        var sphm = {name:'material', color:[1, 0, 0], refl:0.6}
-        var cylm = {name:'material', color:[0, 1, 0], refl:0.7}
+        var sphm = new material({color:[1, 0, 0], refl:0.6})
+        var cylm = new material({color:[0, 1, 0], refl:0.7})
 
-        var dodecahedron =
-        {
-            name: 'object',
-            shape:
-            {
-                name:       'dodecahedron',
+        var dc = new object
+        ({
+            shape: new dodecahedron
+            ({
                 spheres:    {radius:0.2, material:sphm},
                 cylinders:  {radius:0.1, material:cylm}
-            }
-        }
+            })
+        })
 
-        var floor = {
-            name:       'object',
-            material:   {name:'material', color:{name:'checker', size:1}, refl:0.5},
-            shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
-        }
+        var floor = new object
+        ({
+            material:   new material({color:new textures.checker({size:1}), refl:0.5}),
+            shape:      new axisplane({axis:2, center:[0, 0, -2]})
+        })
 
         return new scene({
             lights:     lights,
-            objects:    [dodecahedron, floor],
+            objects:    [dc, floor],
             camera:     cam
         })
     },
@@ -241,7 +265,7 @@ scenes =
     {
         var sph = function(s, c)
         {
-            return {name:'object', shape:{name:'sphere', center:s, radius:1}, material:{name:'material', color:c}}
+            return new object({shape:new sphere({center:s, radius:1}), material:new material({color:c})})
         }
 
         var objects =
@@ -291,18 +315,13 @@ scenes =
             {at:cam.eye, power:1},
         ]
 
-        var flake =
-        {
-            name:   'sphereflake',
-            n:      3
-        }
+        var flake = new sphereflake({n:3})
 
-        var floor =
-        {
-            name:       'object',
-            material:   {name:'material', color:{name:'checker', size:1}},
-            shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
-        }
+        var floor = new object
+        ({
+            material:   new material({color:new textures.checker({size:1})}),
+            shape:      new axisplane({axis:2, center:[0, 0, -2]})
+        })
 
         return new scene
         ({
@@ -333,14 +352,14 @@ scenes =
         var c1 = [1, 0, 0]
         var c2 = [-1, 0, 0]
 
-        var sm = {name:'material', color:[1, 0, 0], refl:0.5, t:0.0, rc:1.5}
+        var sm = new material({color:[1, 0, 0], refl:0.5, t:0.0, rc:1.5})
 
         var ps = function(x, y, z)
         {
             var $ = function() { return 0.0*(Math.random() - 0.5) }
             var c = [x + $(), y + $(), z + $()]
             var n = [x + $(), y + $(), z + $()]
-            return {name:'object', material:sm, shape:{name:'plane', norm:n, center:c}}
+            return new object({material:sm, shape:new plane({norm:n, center:c})})
         }
 
         var cyl = function(x, y, z)
@@ -349,7 +368,7 @@ scenes =
             var b = [-x, -y, -z]
             var r = 0.7
 
-            return {name:'object', material:sm, shape:{name:'cylinder', center1:a, center2:b, radius:r}}
+            return new object({material:sm, shape:new cylinder({center1:a, center2:b, radius:r})})
         }
 
         var sph = function(x, y, z)
@@ -357,7 +376,7 @@ scenes =
             var c = [x, y, z]
             var r = 0.5
 
-            return {name:'object', material:sm, shape:{name:'sphere', center:c, radius:r}}
+            return new object({material:sm, shape:new sphere({center:c, radius:r})})
         }
 
         var planes =
@@ -390,7 +409,6 @@ scenes =
         ]
 
         var cube = csg.and.apply(null, planes)
-        //var cube = {name:'object', shape:{name:'cube'}, material:sm}
         var axes = csg.or.apply(null, cylinders)
         var sphs = csg.or.apply(null, spheres)
 
@@ -399,20 +417,17 @@ scenes =
             csg.not(sphs),
             csg.not(axes))
 
-        //var obj = cube
-
-        cube.bound = {name:'sphere', center:[0, 0, 0], radius:2}
+        cube.bound = new sphere({center:[0, 0, 0], radius:2})
 
         var mx = (new m3x3(1)).rotate(1, -1).rotate(2, -0.1).rotate(1, 3)
 
         obj.transform = {mx:mx.plain(), mp:[0, 0, 0]}
 
-        var floor =
-        {
-            name:       'object',
-            material:   {name:'material', color:{name:'checker', size:1}},
-            shape:      {name:'axisplane', axis:2, center:[0, 0, -2]}
-        }
+        var floor = new object
+        ({
+            material:   new material({color:new textures.checker({size:1})}),
+            shape:      new axisplane({axis:2, center:[0, 0, -2]})
+        })
 
         return new scene
         ({
@@ -454,11 +469,11 @@ scenes =
 
         var newsphere = function(c)
         {
-            return {
-                name:       'object',
-                shape:      {name:'sphere', center:c, radius:1},
-                material:   {name:'material', refl:0.0, rc:1.5, t:0.0, color:[1, 0, 0]}
-            }
+            return new object
+            ({
+                shape:      new sphere({center:c, radius:1}),
+                material:   new material({refl:0.0, rc:1.5, t:0.0, color:[1, 0, 0]})
+            })
         }
 
         var centers = getcenters(5)
@@ -470,12 +485,11 @@ scenes =
         var center = vec.average.apply(null, centers)
         var cameye = vec.add(center, [10, 15, 12])
 
-        var floor =
-        {
-            name:       'object',
-            material:   {name:'material', color:{name:'lines', size:1}},
-            shape:      {name:'plane', norm:[0, 0, 1], center:[0, 0, -1]}
-        }
+        var floor = new object
+        ({
+            material:   new material({color:new textures.lines({size:1})}),
+            shape:      new plane({norm:[0, 0, 1], center:[0, 0, -1]})
+        })
 
         var cam = new camera
         ({
@@ -500,27 +514,24 @@ scenes =
 
     'Test': function()
     {
-        var sphere =
-        {
-            name:       'object',
-            shape:      {name:'sphere', center:[0, 0, 1], radius:1},
-            material:   {name:'material', refl:0.0, rc:1.5, t:0.0, color:[1, 0, 0]}
-        }
+        var sph = new object
+        ({
+            shape:      new sphere({center:[0, 0, 1], radius:1}),
+            material:   new material({refl:0.0, rc:1.5, t:0.0, color:[1, 0, 0]})
+        })
 
-        var cube =
-        {
-            name:       'object',
-            shape:      {name:'cube'},
-            material:   {name:'material', color:[1, 0, 0], refl:0.5, rc:1.5, t:0.5},
+        var cb = new object
+        ({
+            shape:      new cube({}),
+            material:   new material({color:[1, 0, 0], refl:0.5, rc:1.5, t:0.5}),
             transform:  {mx:new m3x3(1), mp:[0, 0, 1]}
-        }
+        })
 
-        var floor =
-        {
-            name:       'object',
-            material:   {name:'material', color:{name:'lines', size:1}},
-            shape:      {name:'axisplane', axis:2, center:[0, 0, 0]}
-        }
+        var floor = new object
+        ({
+            material:   new material({color:new textures.lines({size:1})}),
+            shape:      new axisplane({axis:2, center:[0, 0, 0]})
+        })
 
         var cam = new camera
         ({
@@ -532,7 +543,7 @@ scenes =
 
         return new scene
         ({
-            objects: [sphere, floor],
+            objects: [sph, floor],
             camera: cam,
             bgcolor: [0.5, 0.5, 1.0],
             lights:

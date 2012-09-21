@@ -32,7 +32,7 @@ function cubecyl(opts)
     {
         var pi = coords(i)
         var sph = new sphere({center:pi, radius:spr})
-        objects.push({name:'object', shape:sph, material:spm})
+        objects.push(new object({shape:sph, material:spm}))
     
         for (var ii = 0; ii < 3; ii++)
             if ((i & (1 << ii)) == 0)
@@ -40,16 +40,15 @@ function cubecyl(opts)
                 var j = i | (1 << ii)
                 var pj = coords(j)
                 var cyl = new cylinder({center1:pi, center2:pj, radius:cylr})
-                objects.push({name:'object', shape:cyl, material:cylm})
+                objects.push(new object({shape:cyl, material:cylm}))
             }
     }
 
-    var boundingsphere =
-    {
-        name:   'sphere',
+    var boundingsphere = new sphere
+    ({
         center: vec.average(a, b),
         radius: vec.len(vec.sub(a, b))/2 + spr + math.eps
-    }
+    })
 
     csg.union.apply(this,
     [{

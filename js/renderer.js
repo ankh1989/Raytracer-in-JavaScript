@@ -24,16 +24,16 @@ function LoadDependencies()
 
 function ReadRenderSettings(data)
 {
-    data.scene.objects = factory.deserialize(data.scene.objects)
-
     self.area = data.area
+
+    var scene = scenes[data.scenename]()
 
     self.screen = new screen
     ({
         width:      data.screen.width,
         height:     data.screen.height,
         aarays:     data.settings.aarays,
-        raytracer:  new raytracer({scene:data.scene})
+        raytracer:  new raytracer({scene:scene})
     })
 }
 

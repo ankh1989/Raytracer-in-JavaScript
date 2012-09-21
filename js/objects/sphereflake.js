@@ -33,12 +33,11 @@ function sphereflake(args)
 
     var objects = []
 
-    objects.push
+    objects.push(new object
     ({
-        name:       'object',
-        material:   {name:'material', color:[1, 1, 1]},
-        shape:      {name:'sphere', center:c, radius:r}
-    })
+        material:   new material({color:[1, 1, 1]}),
+        shape:      new sphere({center:c, radius:r})
+    }))
 
     if (n > 0)
         for (var i = 0; i < scoords.length; i++)
@@ -50,26 +49,24 @@ function sphereflake(args)
             var ci = vec.add(c, vec.mul(r + ri, vi))
             var mi = (new m3x3(1)).rotate(1, -bi).rotate(2, -ai).mul(m)
 
-            objects.push
+            objects.push(new sphereflake
             ({
-                name:   'sphereflake',
                 center: ci,
                 radius: ri,
                 axes:   mi,
                 rm:     rm,
                 n:      n - 1
-            })
+            }))
         }
 
     csg.union.apply(this,
     [{
         objects: objects,
-        bound:
-        {
-            name:   'sphere',
+        bound: new sphere
+        ({
             center: c,
             radius: (1 + rm)/(1 - rm)
-        }
+        })
     }])
 }
 
