@@ -28,7 +28,6 @@ function LoadScripts(load)
         'material.js',
         'texture.js',
         'camera.js',
-        'factory.js',
         'screen.js',
         'shaders.js',
         'rpoint.js',
