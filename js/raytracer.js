@@ -1,7 +1,11 @@
 function raytracer(settings)
 {
     this.scene = settings.scene
-    this.obj = csg.or.apply(null, this.scene.objects)
+
+    if (this.scene.objects.length == 1)
+        this.obj = this.scene.objects[0]
+    else
+        this.obj = new group({objects:this.scene.objects})
 }
 
 raytracer.prototype.color = function(r)

@@ -12,11 +12,12 @@ function LoadScripts(load)
         'shapes/sphere.js',
         'shapes/isosurf.js',
 
+        'objects/group.js',
         'objects/csg.js',
         'objects/object.js',
         'objects/cubecyl.js',
         'objects/dodecahedron.js',
-        'objects/sphereflake.js',        
+        'objects/sphereflake.js',
         
         'ray.js',
         'debug.js',

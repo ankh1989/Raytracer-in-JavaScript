@@ -3,6 +3,7 @@ function object(args)
     this.shape      = args.shape
     this.material   = args.material
     this.transform  = args.transform
+    this.bound      = args.bound
 }
 
 object.prototype.inside = function(p)
@@ -12,6 +13,9 @@ object.prototype.inside = function(p)
 
 object.prototype.trace = function(r)
 {
+    if (this.bound && !this.bound.inside(r.from) && !this.bound.trace(r))
+        return
+
     var st = this.transform
     var rayst = r
 
