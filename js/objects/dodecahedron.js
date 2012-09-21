@@ -35,14 +35,18 @@ function dodecahedron(settings)
         }))
     }
 
-    csg.union.apply(this,
+    object.apply(this,
     [{
-        bound:      new sphere({center:dcenter, radius:dradius + sphr}),
-        shapes:     [].concat(spheres, cylinders)
+        shape: new group([].concat(spheres, cylinders)),
+        bound: new sphere
+        ({
+            center: dcenter,
+            radius: dradius + sphr
+        })
     }])
 }
 
-dodecahedron.prototype = csg.union.prototype
+dodecahedron.prototype = object.prototype
 
 dodecahedron.getvertices = function()
 {

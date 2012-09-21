@@ -311,7 +311,11 @@ scenes =
             {at:cam.eye, power:1},
         ]
 
-        var flake = new sphereflake({n:3})
+        var flake = new object
+        ({
+            shape: new sphereflake({n:4}),
+            material: new material({color:[1, 1, 1]})
+        })
 
         var floor = new object
         ({

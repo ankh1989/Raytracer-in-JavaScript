@@ -44,17 +44,15 @@ function cubecyl(opts)
             }
     }
 
-    var bound = new sphere
-    ({
-        center: vec.average(a, b),
-        radius: vec.len(vec.sub(a, b))/2 + spr + math.eps
-    })
-
-    csg.union.apply(this,
+    object.apply(this,
     [{
-        shapes:     objects,
-        bound:      bound
+        shape: new group(objects),
+        bound: new sphere
+        ({
+            center: vec.average(a, b),
+            radius: vec.len(vec.sub(a, b))/2 + spr + math.eps
+        })
     }])
 }
 
-cubecyl.prototype = csg.union.prototype
+cubecyl.prototype = object.prototype

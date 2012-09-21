@@ -1,6 +1,6 @@
-function group(args)
+function group(objects)
 {
-    this.objects = args.objects
+    this.objects = objects
 }
 
 group.prototype.inside = function(p)

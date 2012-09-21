@@ -5,7 +5,7 @@ function raytracer(settings)
     if (this.scene.objects.length == 1)
         this.obj = this.scene.objects[0]
     else
-        this.obj = new group({objects:this.scene.objects})
+        this.obj = new group(this.scene.objects)
 }
 
 raytracer.prototype.color = function(r)

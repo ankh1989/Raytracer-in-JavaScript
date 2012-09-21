@@ -33,11 +33,7 @@ function sphereflake(args)
 
     var objects = []
 
-    objects.push(new object
-    ({
-        material:   new material({color:[1, 1, 1]}),
-        shape:      new sphere({center:c, radius:r})
-    }))
+    objects.push(new sphere({center:c, radius:r}))
 
     if (n > 0)
         for (var i = 0; i < scoords.length; i++)
@@ -59,15 +55,15 @@ function sphereflake(args)
             }))
         }
 
-    csg.union.apply(this,
-    [{
-        shapes: objects,
+    return new bounded
+    ({
+        shape: new group(objects),
         bound: new sphere
         ({
             center: c,
             radius: (1 + rm)/(1 - rm)
         })
-    }])
+    })
 }
 
-sphereflake.prototype = csg.union.prototype
+sphereflake.prototype = bounded.prototype

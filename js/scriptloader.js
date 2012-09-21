@@ -7,6 +7,7 @@ function LoadScripts(load)
         'math/m3x3.js',
         'math/transform.js',
 
+        'shapes/bounded.js',
         'shapes/cylinder.js',
         'shapes/plane.js',
         'shapes/cube.js',
