@@ -54,7 +54,17 @@ raytracer.prototype.diffuse = function(r, hit)
         if (!q || vec.sqrdist(q.at, hit.at) > math.eps)
             continue
 
-        var rp = new rpoint({p:hit.at, v:r.dir, l:dir, n:hit.norm})
+        var n = hit.norm
+        var v = r.dir
+
+        if (vec.dot(v, n) > 0)
+        {
+            n[0] = -n[0]
+            n[1] = -n[1]
+            n[2] = -n[2]
+        }
+
+        var rp = new rpoint({p:hit.at, v:v, l:dir, n:n})
         sumlight += light.power*m.shader.intensity(rp)
     }
     
