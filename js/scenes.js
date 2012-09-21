@@ -356,8 +356,11 @@ scenes =
 
         var lights =
         [
-            {at:[-5, 9, 16], power:1},
-            {at:[0, 0, 0], power:1},
+            {power:0.5, at:[5, 5, 5]},
+            {power:0.5, at:[-5, 5, 5]},
+            {power:0.5, at:[5, -5, 5]},
+            {power:0.5, at:[-5, -5, 5]},
+            {power:0.5, at:[0, 0, 0]},
         ]
 
         var r = 3
@@ -421,12 +424,13 @@ scenes =
             sph(-1, -1, -1),
         ]
 
-        var cube = csg.and.apply(null, planes)
-        var axes = csg.or.apply(null, cylinders)
-        var sphs = csg.or.apply(null, spheres)
+        var cb = csg.and(planes)
+        //var cb = new cube()
+        var axes = csg.or(cylinders)
+        var sphs = csg.or(spheres)
 
         var composite = csg.and(
-            cube,
+            cb,
             csg.not(sphs),
             csg.not(axes))
 

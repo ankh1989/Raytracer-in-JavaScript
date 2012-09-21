@@ -65,7 +65,9 @@ raytracer.prototype.diffuse = function(r, hit)
         }
 
         var rp = new rpoint({p:hit.at, v:v, l:dir, n:n})
-        sumlight += light.power*m.shader.intensity(rp)
+        var li = m.shader.intensity(rp)
+        if (li < 0 || li > 1) throw "invalid light intensity"
+        sumlight += light.power*li
     }
     
     var color = m.color
