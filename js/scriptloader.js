@@ -13,13 +13,13 @@ function LoadScripts(load)
         'shapes/cube.js',
         'shapes/sphere.js',
         'shapes/isosurf.js',
+        'shapes/sphereflake.js',
 
         'objects/group.js',
         'objects/csg.js',
         'objects/object.js',
         'objects/cubecyl.js',
         'objects/dodecahedron.js',
-        'objects/sphereflake.js',
         
         'ray.js',
         'debug.js',
