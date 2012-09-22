@@ -550,14 +550,14 @@ scenes =
             material:   new material([1, 0, 0])
         })
 
-        var cyl = function(r, h)
+        var cyl = function(r, h1, h2)
         {
-            return new cylinder({center1:[0, 0, 0], center2:[0, 0, h], radius:r})
+            return new cylinder({center1:[0, 0, h1], center2:[0, 0, h2], radius:r})
         }
 
         var window = new transformed
         ({
-            shape: cb,
+            shape: new cube(),
             transform: new transform
             ({
                 m: new m3x3(0.3),
@@ -568,24 +568,28 @@ scenes =
         var obj = new object
         ({
             material: new material([1, 1, 1]),
-            shape: csg.and
+            shape: csg.or
             (
-                cyl(1, 1),
-                csg.not(cyl(0.9, 1.1)),
-                csg.not(window)
+                //cyl(1.1, 0.9, 1.1),
+                csg.and
+                (
+                    cyl(1, 0, 1),
+                    csg.not(cyl(0.9, -0.1, 1.1)),
+                    csg.not(window)
+                )
             )
         })
 
         var floor = new object
         ({
-            material:   new material([1, 1, 1]),
+            material:   new material([0.7, 0.8, 0.3]),
             shape:      new axisplane({axis:2, center:[0, 0, 0]})
         })
 
         var cam = new camera
         ({
-            from:   [2, 3, 4],
-            to:     [0, 0, 1],
+            from:   [0.8, 0.3, 1],
+            to:     [-1, 0, 0.3],
             w:      1,
             h:      1
         })
@@ -597,8 +601,8 @@ scenes =
             //bgcolor: [0.5, 0.5, 1.0],
             lights:
             [
-                {power:1, at:[-5, 0, 10]},
-                //{power:1, at:[4, -10, 7]},
+                {power:1, at:[-5, 0, 7]},
+                {power:1, at:[0, 0, 0.5]},
             ]
         })
     }

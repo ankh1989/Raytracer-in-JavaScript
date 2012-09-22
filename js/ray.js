@@ -1,6 +1,5 @@
 function ray(args)
 {
-    this.depth = args.depth || 0
     this.power = args.power
     this.from = args.from
 

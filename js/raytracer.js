@@ -14,8 +14,7 @@ function raytracer(settings)
 raytracer.prototype.color = function(r)
 {
     this.totalrays++
-
-    if (r.depth > 5) return [0, 0, 0]
+    if (r.power < 1e-4) return [0, 0, 0]
 
     var hit = this.obj.trace(r)
     if (!hit) return this.scene.bgcolor
@@ -99,59 +98,7 @@ raytracer.prototype.direct = function(r, hit)
 // Returns the intensity of indirect lighting.
 raytracer.prototype.indirect = function(r, hit)
 {
-    var shader = hit.owner.material.shader
-    var nrays = 0
-    var color = [0, 0, 0]
-
-    for (var i = 0; i < nrays; i++)
-    {
-        //
-        // choose a random point on the hemisphere
-        //
-
-        var phi = Math.random()*Math.PI*2
-        var h = Math.random()
-        var d = Math.sqrt(1 - h*h)
-        var hemirp = [d*Math.cos(phi), d*Math.sin(phi), h]
-
-        //
-        // compute the light intensity factor for the direction
-        //
-
-        var rp = new rpoint
-        ({
-            p: hit.at,
-            v: r.dir,
-            n: hit.norm,
-            l: vec.neg(hemirp)
-        })
-        var li = shader.intensity(rp)/nrays
-        if (li == 0) continue
-
-        //
-        // Compute light intensity for the choosen direction
-        //
-
-        var lr = new ray
-        ({
-            depth:  r.depth + 1,
-            from:   vec.addmul(hit.at, math.eps, hemirp),
-            dir:    hemirp,
-            power:  r.power*li
-        })
-        var lc = this.color(lr)
-        if (!lc || (lc[0] == 0 && lc[1] == 0 && lc[2] == 0)) continue
-
-        //
-        // Collect the computed intensity
-        //
-
-        color[0] += li*lc[0]
-        color[1] += li*lc[1]
-        color[2] += li*lc[2]
-    }
-
-    return color
+    return [0, 0, 0]
 }
 
 // Returns the intensity of the reflected light ray.
@@ -163,7 +110,6 @@ raytracer.prototype.reflection = function(r, hit)
 
     var reflray = new ray
     ({
-        depth:  r.depth + 1,
         from:   np,
         dir:    rd,
         power:  p
@@ -175,8 +121,9 @@ raytracer.prototype.reflection = function(r, hit)
 // Returns the intensity of the refracted light ray(s).
 raytracer.prototype.refraction = function(r, hit)
 {
-    var p = hit.owner.material.transparency*r.power
-    var rr = vec.refract(r.dir, hit.norm, hit.owner.material.refrcoeff)
+    var m = hit.owner.material
+    var p = m.transparency*r.power
+    var rr = vec.refract(r.dir, hit.norm, m.refrcoeff)
 
     if (!rr) return
 
@@ -184,7 +131,6 @@ raytracer.prototype.refraction = function(r, hit)
 
     var refrray = new ray
     ({
-        depth:  r.depth + 1,
         from:   np,
         dir:    rr,
         power:  p
