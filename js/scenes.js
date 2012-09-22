@@ -39,8 +39,8 @@ scenes =
                 }),
                 material: new material
                 ({
-                    refl:   0.6,
-                    color:  color
+                    reflection: 0.6,
+                    color:      color
                 })
             })
         }
@@ -95,10 +95,10 @@ scenes =
             {power:1, at:[0, 0, 0]},
         ]
     
-        var sm = new material({refl:0.7, color:[0, 1, 0]})
-        var cm = new material({refl:0.8, color:[1, 0, 0]})
+        var sm = new material({reflection:0.7, color:[0, 1, 0]})
+        var cm = new material({reflection:0.8, color:[1, 0, 0]})
         var tc = new textures.checker({size:0.5})
-        var pm = new material({refl:0.5, color:tc})
+        var pm = new material({reflection:0.5, color:tc})
         var sr = 0.5
 
         var cc = new cubecyl({sphere:{r:sr, mat:sm}, cyl:{r:0.3, mat:cm}})
@@ -127,9 +127,9 @@ scenes =
 
     'Isosurface': function()
     {
-        var sm = new material({refl:0.4, color:[1, 0, 0]})
+        var sm = new material({reflection:0.4, color:[1, 0, 0]})
         var pc = new textures.checker({size:5})
-        var pm = new material({refl:0.5, rc:1.5, t:0.0, color:[1, 0, 0]})
+        var pm = new material({reflection:0.5, color:[1, 0, 0]})
 
         var f_ring = function(x, y, z)
         {
@@ -210,7 +210,7 @@ scenes =
 
         var floor = new object
         ({
-            material:   new material({color:new textures.checker({size:1}), refl:0.5}),
+            material:   new material({color:new textures.checker({size:1}), reflection:0.5}),
             shape:      new axisplane({axis:2, center:[0, 0, -2]})
         })
 
@@ -243,15 +243,15 @@ scenes =
             h:      1
         })
 
-        var sphm = new material({color:[1, 0, 0], refl:0.6})
-        var cylm = new material({color:[0, 1, 0], refl:0.7})
+        var sphm = new material({color:[1, 0, 0], reflection:0.6})
+        var cylm = new material({color:[0, 1, 0], reflection:0.7})
 
         var dc = new object
         ({
             material: new material
             ({
                 color: [1, 0, 0],
-                refl: 0.5
+                reflection: 0.5
             }),
             shape: new dodecahedron
             ({
@@ -262,7 +262,7 @@ scenes =
 
         var floor = new object
         ({
-            material:   new material({color:new textures.checker({size:1}), refl:0.5}),
+            material:   new material({color:new textures.checker({size:1}), reflection:0.5}),
             shape:      new axisplane({axis:2, center:[0, 0, -2]})
         })
 

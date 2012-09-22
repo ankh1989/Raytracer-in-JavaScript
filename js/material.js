@@ -3,15 +3,15 @@ function material(args)
     if (args == 'glass')
         return new material
         ({
-            rc:     1.5,
-            t:      0.5,
-            refl:   0.5,
-            color:  [0, 1, 0]
+            transparency:   0.5,
+            reflection:     0.5,
+            diffuse:        0.0,
+            refrcoeff:      1.5
         })
     else if (args == 'mirror')
         return new material
         ({
-            refl:   1.0
+            reflection: 1.0
         })
     else if (isarray(args) && args.length == 3)
         return new material
@@ -24,15 +24,12 @@ function material(args)
         {
             return typeof args[val] == 'undefined' ? defaultval : args[val]
         }
-    
-        this.lambert       = $('lam', 0.3)
-        this.phong         = $('ph', 0.6)
-        this.ambient       = $('ambient', 0.1)
-        this.phongpower    = $('phpow', 7)
-        this.reflection    = $('refl', 0)
-        this.refrcoeff     = $('rc', 1)
-        this.transparency  = $('t', 0)
-        this.surface       = 1 - this.reflection - this.transparency
+
+        this.reflection    = args.reflection || 0
+        this.transparency  = args.transparency || 0
+        this.diffuse       = args.diffuse || 1 - this.reflection - this.transparency
+
+        this.refrcoeff     = args.refrcoeff || 1
         this.color         = args.color
         this.shader        = args.shader || new shaders.phong({})
     }

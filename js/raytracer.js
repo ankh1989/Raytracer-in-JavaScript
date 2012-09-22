@@ -24,7 +24,7 @@ raytracer.prototype.color = function(r)
 
     var m = hit.owner.material
 
-    var surf = m.surface
+    var surf = m.diffuse
     var refl = m.reflection
     var refr = m.transparency
 
