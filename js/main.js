@@ -373,18 +373,25 @@ function OnAllScriptsLoaded()
 
     $('canvas').onclick = function(event)
     {
+        var rt = new raytracer({scene:CreateSelectedScene()})
         var s = new screen
         ({
             width:      $('canvas').width,
             height:     $('canvas').height,
             aarays:     1,
-            raytracer:  new raytracer({scene:CreateSelectedScene()})
+            raytracer:  rt
         })
 
         var x = event.x
         var y = event.y
+
         var c = s.raycolor(x, y, 1)
         console.log('(' + x + ',' + y + ')=[' + c + ']')
+
+        var r = rt.scene.camera.ray(x/s.width, y/s.height)
+        r.power = 1
+        rt.emit(r)
+        console.log('photos created: ' + rt.photonmap.length)
     }
 
     initialize()

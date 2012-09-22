@@ -9,7 +9,7 @@ function raytracer(settings)
 
     this.totalrays = 0
     this.photonmap = []
-    this.dirays = 10
+    this.dirays = 100
 }
 
 raytracer.prototype.trace = function(r)
@@ -149,14 +149,26 @@ raytracer.prototype.refract = function(r, hit)
     return this.color(rr)
 }
 
-// Emits a photon and updates the photon map.
+// Emits a light ray and puts produced photos
+// into the phon map.
 raytracer.prototype.emit = function(r)
 {
     if (r.power < math.eps) return
     var h = this.trace(r)
     if (!h) return
 
-    this.photonmap.push(r.clone())
+    // The photon's origin is jittered to avoid
+    // having two photos with the same
+    // x, y or z coordinate. This will help to
+    // build the kd-tree.
+    var photon = new ray
+    ({
+        from:   vec.addmul(h.at, 1e-6, vec.random()),
+        dir:    r.dir,
+        power:  r.power
+    })
+
+    this.photonmap.push(photon)
     var m = h.owner.material
 
     // caustics produced by reflected photos
@@ -167,7 +179,7 @@ raytracer.prototype.emit = function(r)
         {
             var rr = new ray
             ({
-                from:   h.at,
+                from:   vec.clone(h.at),
                 dir:    v,
                 power:  r.power*m.reflectance
             })
@@ -185,7 +197,7 @@ raytracer.prototype.emit = function(r)
         {
             var rr = new ray
             ({
-                from:   h.at,
+                from:   vec.clone(h.at),
                 dir:    v,
                 power:  r.power*m.transparency
             })
@@ -198,6 +210,8 @@ raytracer.prototype.emit = function(r)
     // diffuse interreflection
     if (m.diffuse > 0)
     {
+        var power = r.power*m.diffuse/this.dirays
+        if (power > math.eps)
         for (var i = 0; i < this.dirays; i++)
         {
             var phi = Math.random()*Math.PI*2
@@ -216,9 +230,9 @@ raytracer.prototype.emit = function(r)
             var li = m.shader.intensity(rp)
             var lr = new ray
             ({
-                from:   h.at,
+                from:   vec.clone(h.at),
                 dir:    hemirp,
-                power:  r.power*li/this.dirays
+                power:  power*li
             })
 
             lr.advance(math.eps)
