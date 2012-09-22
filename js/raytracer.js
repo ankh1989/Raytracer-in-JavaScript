@@ -72,19 +72,24 @@ raytracer.prototype.direct = function(r, hit)
     for (var i = 0; i < this.scene.lights.length; i++)
     {
         var light = this.scene.lights[i]
-        var dir = vec.sub(hit.at, light.at)
-        var dist = vec.len(dir)
-        var id = 1/dist
+        var lr = new ray
+        ({
+            from:   light.at,
+            to:     hit.at
+        })
 
-        dir[0] *= id
-        dir[1] *= id
-        dir[2] *= id
-
-        var q = this.obj.trace(new ray({from:light.at, dir:dir}))
-        if (!q || vec.sqrdist(q.at, hit.at) > math.eps)
+        var lh = this.obj.trace(lr)
+        if (!lh || vec.dist(lh.at, hit.at) > 1e-3)
             continue
 
-        var rp = new rpoint({p:hit.at, v:r.dir, l:dir, n:hit.norm})
+        var rp = new rpoint
+        ({
+            p:  hit.at,
+            v:  r.dir,
+            l:  lr.dir,
+            n:  hit.norm
+        })
+
         intensity += light.power*shader.intensity(rp)
     }
 
