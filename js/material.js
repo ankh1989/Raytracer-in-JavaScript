@@ -4,14 +4,14 @@ function material(args)
         return new material
         ({
             transparency:   0.5,
-            reflection:     0.5,
+            reflectance:     0.5,
             diffuse:        0.0,
             refrcoeff:      1.5
         })
     else if (args == 'mirror')
         return new material
         ({
-            reflection: 1.0
+            reflectance: 1.0
         })
     else if (isarray(args) && args.length == 3)
         return new material
@@ -25,9 +25,9 @@ function material(args)
             return typeof args[val] == 'undefined' ? defaultval : args[val]
         }
 
-        this.reflection    = args.reflection || 0
+        this.reflectance    = args.reflectance || 0
         this.transparency  = args.transparency || 0
-        this.diffuse       = args.diffuse || 1 - this.reflection - this.transparency
+        this.diffuse       = args.diffuse || 1 - this.reflectance - this.transparency
 
         this.refrcoeff     = args.refrcoeff || 1
         this.color         = args.color

@@ -8,6 +8,13 @@ function raytracer(settings)
         this.obj = new group(this.scene.objects)
 
     this.totalrays = 0
+    this.photonmap = []
+    this.dirays = 10
+}
+
+raytracer.prototype.trace = function(r)
+{
+    return this.obj.trace(r)
 }
 
 // Returns the intensity of light along a specified ray.
@@ -16,7 +23,7 @@ raytracer.prototype.color = function(r)
     this.totalrays++
     if (r.power < 1e-4) return [0, 0, 0]
 
-    var hit = this.obj.trace(r)
+    var hit = this.trace(r)
     if (!hit) return this.scene.bgcolor
 
     if (vec.dot(r.dir, hit.norm) > 0)
@@ -25,12 +32,12 @@ raytracer.prototype.color = function(r)
     var m = hit.owner.material
 
     var surf = m.diffuse
-    var refl = m.reflection
+    var refl = m.reflectance
     var refr = m.transparency
 
     var surfcol = this.diffuse(r, hit) || [0, 0, 0]
-    var reflcol = this.reflection(r, hit) || [0, 0, 0]
-    var refrcol = this.refraction(r, hit) || [0, 0, 0]
+    var reflcol = this.reflect(r, hit) || [0, 0, 0]
+    var refrcol = this.refract(r, hit) || [0, 0, 0]
     
     return [
         surf * surfcol[0] + refl * reflcol[0] + refr * refrcol[0],
@@ -78,7 +85,7 @@ raytracer.prototype.direct = function(r, hit)
             to:     hit.at
         })
 
-        var lh = this.obj.trace(lr)
+        var lh = this.trace(lr)
         if (!lh || vec.dist(lh.at, hit.at) > 1e-3)
             continue
 
@@ -107,7 +114,7 @@ raytracer.prototype.indirect = function(r, hit)
 }
 
 // Returns the intensity of the reflected light ray.
-raytracer.prototype.reflection = function(r, hit)
+raytracer.prototype.reflect = function(r, hit)
 {
     var m = hit.owner.material
     var v = vec.reflect(r.dir, hit.norm)
@@ -117,7 +124,7 @@ raytracer.prototype.reflection = function(r, hit)
     ({
         from:   hit.at,
         dir:    v,
-        power:  r.power*m.reflection
+        power:  r.power*m.reflectance
     })
 
     rr.advance(math.eps)
@@ -125,7 +132,7 @@ raytracer.prototype.reflection = function(r, hit)
 }
 
 // Returns the intensity of the refracted light ray(s).
-raytracer.prototype.refraction = function(r, hit)
+raytracer.prototype.refract = function(r, hit)
 {
     var m = hit.owner.material
     var v = vec.refract(r.dir, hit.norm, m.refrcoeff)
@@ -140,4 +147,82 @@ raytracer.prototype.refraction = function(r, hit)
 
     rr.advance(math.eps)
     return this.color(rr)
+}
+
+// Emits a photon and updates the photon map.
+raytracer.prototype.emit = function(r)
+{
+    if (r.power < math.eps) return
+    var h = this.trace(r)
+    if (!h) return
+
+    this.photonmap.push(r.clone())
+    var m = h.owner.material
+
+    // caustics produced by reflected photos
+    if (m.reflectance > 0)
+    {
+        var v = vec.reflect(r.dir, h.norm)
+        if (v)
+        {
+            var rr = new ray
+            ({
+                from:   h.at,
+                dir:    v,
+                power:  r.power*m.reflectance
+            })
+
+            rr.advance(math.eps)
+            this.emit(rr)
+        }
+    }
+
+    // caustics produced by refracted photos
+    if (m.transparency > 0)
+    {
+        var v = vec.refract(r.dir, h.norm, m.refrcoeff)
+        if (v)
+        {
+            var rr = new ray
+            ({
+                from:   h.at,
+                dir:    v,
+                power:  r.power*m.transparency
+            })
+
+            rr.advance(math.eps)
+            this.emit(rr)
+        }
+    }
+
+    // diffuse interreflection
+    if (m.diffuse > 0)
+    {
+        for (var i = 0; i < this.dirays; i++)
+        {
+            var phi = Math.random()*Math.PI*2
+            var f = Math.random()
+            var d = Math.sqrt(1 - f*f)
+            var hemirp = [d*Math.cos(phi), d*Math.sin(phi), f]
+
+            var rp = new rpoint
+            ({
+                p: h.at,
+                v: r.dir,
+                n: h.norm,
+                l: vec.neg(hemirp)
+            })
+
+            var li = m.shader.intensity(rp)
+            var lr = new ray
+            ({
+                from:   h.at,
+                dir:    hemirp,
+                power:  r.power*li/this.dirays
+            })
+
+            lr.advance(math.eps)
+            this.emit(lr)
+        }
+    }
 }

@@ -9,13 +9,8 @@ function screen(settings)
 screen.prototype.raycolor = function(x, y, raypower)
 {
     var cam = this.rt.scene.camera
-
-    var x2 = vec.mul(x / this.width, cam.right)
-    var y2 = vec.mul(y / this.height, cam.down)
-    
-    var scr = vec.add(cam.lt, vec.add(x2, y2))
-    var r = new ray({from:cam.eye, to:scr, power:raypower})
-
+    var r = cam.ray(x/this.width, y/this.height)
+    r.power = raypower
     return this.rt.color(r)
 }
 
