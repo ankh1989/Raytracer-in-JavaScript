@@ -109,37 +109,35 @@ raytracer.prototype.indirect = function(r, hit)
 // Returns the intensity of the reflected light ray.
 raytracer.prototype.reflection = function(r, hit)
 {
-    var p = hit.owner.material.reflection*r.power
-    var rd = vec.reflect(r.dir, hit.norm)
-    var np = vec.addmul(hit.at, math.eps, rd)
+    var m = hit.owner.material
+    var v = vec.reflect(r.dir, hit.norm)
+    if (!v) return
 
-    var reflray = new ray
+    var rr = new ray
     ({
-        from:   np,
-        dir:    rd,
-        power:  p
+        from:   hit.at,
+        dir:    v,
+        power:  r.power*m.reflection
     })
 
-    return this.color(reflray)
+    rr.advance(math.eps)
+    return this.color(rr)
 }
 
 // Returns the intensity of the refracted light ray(s).
 raytracer.prototype.refraction = function(r, hit)
 {
     var m = hit.owner.material
-    var p = m.transparency*r.power
-    var rr = vec.refract(r.dir, hit.norm, m.refrcoeff)
+    var v = vec.refract(r.dir, hit.norm, m.refrcoeff)
+    if (!v) return
 
-    if (!rr) return
-
-    var np = vec.addmul(hit.at, math.eps, rr)
-
-    var refrray = new ray
+    var rr = new ray
     ({
-        from:   np,
-        dir:    rr,
-        power:  p
+        from:   hit.at,
+        dir:    v,
+        power:  r.power*m.transparency
     })
 
-    return this.color(refrray)
+    rr.advance(math.eps)
+    return this.color(rr)
 }
