@@ -214,24 +214,26 @@ raytracer.prototype.emit = function(r)
         if (power > math.eps)
         for (var i = 0; i < this.dirays; i++)
         {
-            var phi = Math.random()*Math.PI*2
-            var f = Math.random()
-            var d = Math.sqrt(1 - f*f)
-            var hemirp = [d*Math.cos(phi), d*Math.sin(phi), f]
+            var x = new m3x3({xaxis:h.norm})
+            var v = vec.random()
+            v[0] = Math.abs(v[0])
+            v = x.vmul(v)
+            if (vec.dot(v, h.norm) < 0) throw "invalid v"
 
             var rp = new rpoint
             ({
                 p: h.at,
                 v: r.dir,
                 n: h.norm,
-                l: vec.neg(hemirp)
+                m: x,
+                l: vec.neg(v)
             })
 
             var li = m.shader.intensity(rp)
             var lr = new ray
             ({
                 from:   vec.clone(h.at),
-                dir:    hemirp,
+                dir:    v,
                 power:  power*li
             })
 

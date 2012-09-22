@@ -12,7 +12,17 @@ vec.all = function(x)
 
 vec.random = function()
 {
-    return [Math.random(), Math.random(), Math.random()]
+    var v = [Math.random(), Math.random(), Math.random()]
+    var d = vec.len(v)
+    if (d != 0)
+    {
+        var f = 1/d
+
+        v[0] *= f
+        v[1] *= f
+        v[2] *= f
+    }
+    return v
 }
 
 vec.e = function(i)

@@ -7,6 +7,7 @@ function rpoint(args)
     this.v_ = args.v
     this.l_ = args.l
     this.n_ = args.n
+    this.m  = args.m
 }
 
 rpoint.prototype.p = function()
