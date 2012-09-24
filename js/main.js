@@ -381,12 +381,14 @@ function OnAllScriptsLoaded()
             GetPhotonMap
             ({
                 scenename:  GetSelectedSceneName(),
-                numphotons: 20000,
+                numphotons: 2000000,
                 numworkers: GetNumWorkers(),
                 onready:    function(photons)
                 {
-                    DrawPhotons(photons)
                     PreparePhotonsForTransfer(photons)
+                    DrawPhotons(photons)
+                    //PrintPhotons(photons)
+                    //TestTrace(photons)
                     console.log('photons: ', photons)
                     map.photons = photons
                     map.Render()
@@ -551,4 +553,28 @@ function PreparePhotonsForTransfer(photons)
         roundv(pi.from, 1e3)
         roundv(pi.dir, 1e3)
     }
+}
+
+function TestTrace(photons)
+{
+    var scene = scenes[GetSelectedSceneName()]()
+    var rt = new raytracer({scene:scene})
+    rt.photons = photons
+    var r = new ray({from:scene.camera.eye, to:[0, 0, 0], power:1})
+    var c = rt.color(r)
+    console.log('color:', c)
+}
+
+function PrintPhotons(photons)
+{
+    var strings = []
+
+    for (var i = 0; i < photons.length; i++)
+    {
+        var p = photons[i].from
+        strings.push('[' + p[0] + ',' + p[1] + ',' + p[2] + ']')
+    }
+
+    var str = strings.join(',')
+    console.log('[', str, ']')
 }

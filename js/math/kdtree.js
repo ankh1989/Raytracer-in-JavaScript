@@ -28,8 +28,8 @@ function kdtree(objects, getp)
 
         for (var axis = 0; axis < dims; axis++)
         {
-            lsorted[axis] = new Array(lcount)
-            rsorted[axis] = new Array(rcount)
+            var L = new Array(lcount)
+            var R = new Array(rcount)
 
             var il = 0
             var ir = 0
@@ -40,12 +40,15 @@ function kdtree(objects, getp)
                 var coord = getp(obj)[splitaxis]
 
                 if (coord < median)
-                    lsorted[axis][il++] = obj
+                    L[il++] = obj
                 else if (coord > median)
-                    rsorted[axis][ir++] = obj
+                    R[ir++] = obj
                 else if (axis == splitaxis)
                     splitted.push(obj)
             }
+
+            lsorted[axis] = L.slice(0, il)
+            rsorted[axis] = R.slice(0, ir)
         }
 
         var nextsplitaxis = (splitaxis + 1) % dims

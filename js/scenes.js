@@ -588,7 +588,7 @@ scenes =
         return new scene
         ({
             camera:     cam,
-            lights:     [{power:20, at:[0, 0, 0.99]}],
+            lights:     [{power:5, at:[0, 0, 0.99]}],
             objects:    [walls, objects]
         })
     },
@@ -658,7 +658,7 @@ scenes =
             //bgcolor: [0.5, 0.5, 1.0],
             lights:
             [
-                {power:1e6, at:[-80, 80, 80]}
+                {power:3e3, at:[-5, 5, 5]}
             ]
         })
     }

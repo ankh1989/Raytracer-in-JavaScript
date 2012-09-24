@@ -132,7 +132,7 @@ raytracer.prototype.indirect = function(r, h)
     }
 
     var p = h.at
-    var e = 0.1
+    var e = 0.05
 
     var photons = this.photonmap.select
     (
@@ -158,7 +158,7 @@ raytracer.prototype.indirect = function(r, h)
         li += rpli*pi.power
     }
 
-    var s = Math.PI*e*e
+    var s = 4*e*e
     li /= s
     return [li, li, li]
 }
@@ -209,7 +209,7 @@ raytracer.prototype.emit = function(r)
     var h = this.trace(r)
     if (!h) return
 
-    if (r.depth > 0)
+    if (r.depth > 1)
     {
         // The photon's origin is jittered to avoid
         // having two photos with the same
