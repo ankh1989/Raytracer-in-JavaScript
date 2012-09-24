@@ -47,7 +47,8 @@ function CreateSelectedScene()
 
 function OnAllScriptsLoaded()
 {
-    unittests.run()
+    if (!unittests.run())
+        $('uterror').style.visibility = 'visible'
 
     map = {}
 

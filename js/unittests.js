@@ -220,6 +220,18 @@ var unittests =
 
 unittests.run = function()
 {
+    var failed = false
+
     for (var i = 0; i < unittests.length; i++)
+    try
+    {
         unittests[i]()
+    }
+    catch(e)
+    {
+        console.log('unit test #' + i + '> ', e)
+        failed = true
+    }
+
+    return !failed
 }
