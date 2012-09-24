@@ -453,11 +453,37 @@ function GetPhotonMap(args)
     var nactiveworkers = numworkers
     var photonarrays = []
 
+    var GeneratePhotons = function(scenename, numphotons)
+    {
+        var scene = scenes[scenename]()
+        var rt = new raytracer({scene:scene})
+
+        for (var i in rt.scene.lights)
+        {
+            var light = rt.scene.lights[i]
+            if (!light.power) continue
+
+            for (var n = 0; n < numphotons; n++)
+            {
+                var r = new ray
+                ({
+                    from:   light.at,
+                    dir:    vec.randomdir(),
+                    power:  light.power/numphotons
+                })
+
+                rt.emit(r)
+            }
+        }
+
+        return rt.photons
+    }
+
     var OnWorkerReady = function(event)
     {
         event.target.terminate()
 
-        photonarrays.push(event.data.photons)
+        photonarrays.push(event.data.result)
         nactiveworkers--
 
         if (nactiveworkers < 0)
@@ -472,14 +498,14 @@ function GetPhotonMap(args)
 
     for (var i = 0; i < numworkers; i++)
     {
-        var t = new Worker('js/photonemitter.js')
+        var t = new Worker('js/worker.js')
 
         t.onmessage = OnWorkerReady
 
         t.postMessage
         ({
-            scenename:  scenename,
-            numphotons: Math.ceil(numphotons/numworkers)
+            func: GeneratePhotons + '',
+            args: [scenename, Math.ceil(numphotons/numworkers)]
         })
     }
 }
