@@ -161,3 +161,60 @@ math.swap = function(a, i, j)
     a[i] = aj
     a[j] = ai
 }
+
+math.sum = function(a)
+{
+    var s = 0
+    for (var i = 0; i < a.length; i++)
+        s += a[i]
+    return s
+}
+
+math.mul = function(a)
+{
+    var s = 1
+    for (var i = 0; i < a.length; i++)
+        s *= a[i]
+    return s
+}
+
+// Sorts an array represented by the "get" function:
+// get(first)..get(last).
+// Average sorting time: n*log(n).
+math.sort = function(first, last, get, swap)
+{
+    var qsort = function(i0, j0)
+    {
+        var i = i0
+        var j = j0
+        var v = get(Math.floor((i + j)/2))
+
+        while (i < j)
+        {
+            while (get(i) < v) i++
+            while (get(j) > v) j--
+            if (i <= j)
+            {
+                swap(i, j)
+                i++
+                j--
+            }
+        }
+
+        if (i0 < j) qsort(i0, j)
+        if (i < j0) qsort(i, j0)
+    }
+
+    qsort(first, last)
+}
+
+math.sortarray = function(a)
+{
+    math.sort
+    (
+        0,
+        a.length - 1,
+        function(i){return a[i]},
+        function(i, j){math.swap(a, i, j)}
+    )
+}

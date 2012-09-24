@@ -1,7 +1,7 @@
 function plane(settings)
 {
-    this.p = settings.center || vec.all(0)
-    this.n = vec.norm(settings.norm || [0, 0, 1])
+    this.p = settings.center || settings.p || vec.all(0)
+    this.n = vec.norm(settings.norm || settings.n || [0, 0, 1])
     this.pn = vec.dot(this.p, this.n)
 }
 
@@ -38,8 +38,8 @@ plane.prototype.trace = function(r)
 
 function axisplane(settings)
 {
-    this.p = settings.center || vec.all(0)
-    this.axis = settings.axis || 2
+    this.p = settings.center || settings.p || vec.all(0)
+    this.axis = settings.axis || settings.n || 2
     this.n = vec.e(this.axis)
     this.paxis = this.p[this.axis]
 }

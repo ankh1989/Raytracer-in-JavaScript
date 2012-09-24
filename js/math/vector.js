@@ -12,7 +12,12 @@ vec.all = function(x)
 
 vec.random = function()
 {
-    var v = [Math.random(), Math.random(), Math.random()]
+    return [Math.random()-0.5, Math.random()-0.5, Math.random()-0.5]
+}
+
+vec.randomdir = function()
+{
+    var v = vec.random()
     var d = vec.len(v)
     if (d != 0)
     {
@@ -23,6 +28,11 @@ vec.random = function()
         v[2] *= f
     }
     return v
+}
+
+vec.leq = function(a, b)
+{
+    return a[0] <= b[0] && a[1] <= b[1] && a[2] <= b[2]
 }
 
 vec.e = function(i)
@@ -160,4 +170,9 @@ vec.refract = function(v, n, q)
         a * v[1] + b * n[1],
         a * v[2] + b * n[2]
     ]
+}
+
+vec.sqrcdist = function(s, v)
+{
+    return vec.len(v) - Math.abs(vec.dot(v, s))
 }
