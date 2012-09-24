@@ -10,6 +10,8 @@ function raytracer(settings)
     this.totalrays = 0
     this.photons = []
     this.photonmap = null // kd-tree from photos
+
+    this.ip4 = 1/(4*Math.PI)
 }
 
 raytracer.prototype.trace = function(r)
@@ -94,7 +96,7 @@ raytracer.prototype.direct = function(r, hit)
         })
 
         var lh = this.trace(lr)
-        if (!lh || vec.dist(lh.at, hit.at) > 1e-3)
+        if (!lh || vec.sqrdist(lh.at, hit.at) > 1e-3)
             continue
 
         var rp = new rpoint
@@ -105,7 +107,8 @@ raytracer.prototype.direct = function(r, hit)
             n:  hit.norm
         })
 
-        intensity += light.power*shader.intensity(rp)
+        var fadeout = this.ip4/vec.sqrdist(hit.at, light.at)
+        intensity += light.power*fadeout*shader.intensity(rp)
     }
 
     return [

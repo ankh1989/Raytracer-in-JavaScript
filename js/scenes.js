@@ -4,9 +4,9 @@ scenes =
     {
         var lights =
         [
-            {at:[2, 2, 1],     power:1},
-            {at:[-2, 10, 7],   power:1},
-            {at:[-10, -3, 4],  power:1},
+            {at:[20, 20, 10],     power:20000},
+            {at:[-20, 100, 70],   power:20000},
+            {at:[-100, -30, 40],  power:20000},
         ]
     
         var s2 = Math.sqrt(2)
@@ -26,7 +26,7 @@ scenes =
             t[i] = vec.sub(t[i], c)
         
         var tc = new textures.checker({size:0.5})
-        var pm = new material({color:tc})
+        var pm = new material({color:tc, reflectance:0.5})
 
         var newsphere = function(c, color)
         {
@@ -86,13 +86,20 @@ scenes =
 
     'Cube': function()
     {
+        var light = function(x, y, z, p)
+        {
+            var p = p || 300000
+            var k = 100
+            return {power:p, at:[k*x, k*y, k*z]}
+        }
+
         var lights =
         [
-            {power:1, at:[5, 5, 5]},
-            {power:1, at:[-5, 5, 5]},
-            {power:1, at:[5, -5, 5]},
-            {power:1, at:[-5, -5, 5]},
-            {power:1, at:[0, 0, 0]},
+            light(1, 1, 1),
+            light(-1, 1, 1),
+            light(1, -1, 1),
+            light(-1, -1, 1),
+            light(0, 0, 0, 50),
         ]
     
         var sm = new material({reflectance:0.7, color:[0, 1, 0]})
@@ -218,8 +225,8 @@ scenes =
         ({
             lights:
             [
-                {at:[0, 0, 0], power:1},
-                {at:[1, 2, 20], power:1},
+                {at:[0, 0, 0], power:20},
+                {at:[100, 200, 2000], power:100000000},
             ],
             objects: [iso, floor],
             camera: cam,
@@ -229,11 +236,8 @@ scenes =
     'Dodecahedron': function()
     {
         var lights = [
-            {power:1, at:[5, 5, 5]},
-            {power:1, at:[-5, 5, 5]},
-            {power:1, at:[5, -5, 5]},
-            {power:1, at:[-5, -5, 5]},
-            {power:1, at:[0, 0, 0]},
+            {power:1e5, at:[-50, -50, 50]},
+            {power:20, at:[0, 0, 0]},
         ]
 
         var cam = new camera({
@@ -298,7 +302,7 @@ scenes =
 
         var lights = 
         [
-            {at:cam.eye, power:1}
+            {at:cam.eye, power:2e3}
         ]
 
         return new scene
@@ -323,8 +327,7 @@ scenes =
         })
 
         var lights = [
-            {at:[-5, 9, 16], power:1},
-            {at:cam.eye, power:1},
+            {at:[-50, 90, 160], power:3e5},
         ]
 
         var flake = new object
@@ -359,14 +362,8 @@ scenes =
 
         var lights =
         [
-            /*
-            {power:0.5, at:[5, 5, 5]},
-            {power:0.5, at:[-5, 5, 5]},
-            {power:0.5, at:[5, -5, 5]},
-            {power:0.5, at:[-5, -5, 5]},
-            */
-            {power:0.5, at:[0, 0, 0]},
-            {power:0.5, at:[3, 4, 2]}
+            {power:10, at:[0, 0, 0]},
+            {power:5e4, at:[30, 40, 50]}
         ]
 
         var r = 3
@@ -530,8 +527,8 @@ scenes =
             bgcolor: [0.5, 0.5, 1.0],
             lights:
             [
-                {power:0.8, at:[10, 100, 60]},
-                {power:0.2, at:cam.eye},
+                {power:1e5, at:[10, 100, 60]},
+                {power:1e2, at:cam.eye},
             ]
         })
     },
@@ -591,7 +588,7 @@ scenes =
         return new scene
         ({
             camera:     cam,
-            lights:     [{power:50, at:[0, 0, 0.99]}],
+            lights:     [{power:20, at:[0, 0, 0.99]}],
             objects:    [walls, objects]
         })
     },
@@ -649,7 +646,7 @@ scenes =
         var cam = new camera
         ({
             from:   [4, 3, 2],
-            to:     [1, -1, 0],
+            to:     [0.8, -0.8, 0],
             w:      1,
             h:      1
         })
@@ -661,7 +658,7 @@ scenes =
             //bgcolor: [0.5, 0.5, 1.0],
             lights:
             [
-                {power:1, at:[-8, 8, 8]}
+                {power:1e6, at:[-80, 80, 80]}
             ]
         })
     }
