@@ -536,12 +536,72 @@ scenes =
         })
     },
 
+    'Cornell Box': function()
+    {
+        var wall = function(p, n, c)
+        {
+            return new object
+            ({
+                shape: new plane({p:p, n:n}),
+                material: new material(c)
+            })
+        }
+
+        var box = function(x, y, w, h, r)
+        {
+            return new object
+            ({
+                material: new material([1, 1, 1]),
+                shape: new transformed
+                ({
+                    shape: new cube(),
+                    transform: new transform
+                    ({
+                        m: (new m3x3(1)).stretch(0, w/2).stretch(1, w/2).stretch(2, h/2).rotate(2, r),
+                        p: [x, y, h/2 - 1]
+                    })
+                })
+            })
+        }
+
+        var walls = new group
+        ([
+            wall([0, 0, -1], [0, 0, 1], [1, 1, 1]), // floor
+            wall([0, 0, 1], [0, 0, -1], [1, 1, 1]), // ceiling
+            wall([0, -1, 0], [0, 1, 0], [1, 0, 0]), // left red wall
+            wall([0, 1, 0], [0, -1, 0], [0, 1, 0]), // right green wall
+            wall([-1, 0, 0], [1, 0, 0], [1, 1, 1])  // white back wall
+        ])
+
+        var objects = new group
+        ([
+            box(-0.1, -0.3, 0.8, 1.3, -0.3),
+            box(0.5, 0.5, 0.6, 0.6, 0.4)
+        ])
+
+        var cam = new camera
+        ({
+            from:   [3.5, 0, 0],
+            to:     [0, 0, 0],
+            w:      2,
+            h:      2,
+            len:    2.5
+        })
+
+        return new scene
+        ({
+            camera:     cam,
+            lights:     [{power:50, at:[0, 0, 0.99]}],
+            objects:    [walls, objects]
+        })
+    },
+
     'Test': function()
     {
         var sph = new object
         ({
             shape:      new sphere({center:[0, 0, 1], radius:1}),
-            material:   new material([1, 0, 0])
+            material:   new material('glass')
         })
 
         var cb = new object
@@ -582,27 +642,26 @@ scenes =
 
         var floor = new object
         ({
-            material:   new material([0.7, 0.8, 0.3]),
+            material:   new material([0.5, 0.5, 0.5]),
             shape:      new axisplane({axis:2, center:[0, 0, 0]})
         })
 
         var cam = new camera
         ({
-            from:   [0.8, 0.3, 1],
-            to:     [-1, 0, 0.3],
+            from:   [4, 3, 2],
+            to:     [1, -1, 0],
             w:      1,
             h:      1
         })
 
         return new scene
         ({
-            objects: [obj, floor],
+            objects: [sph, floor],
             camera: cam,
             //bgcolor: [0.5, 0.5, 1.0],
             lights:
             [
-                {power:1, at:[-5, 0, 7]},
-                {power:1, at:[0, 0, 0.5]},
+                {power:1, at:[-8, 8, 8]}
             ]
         })
     }

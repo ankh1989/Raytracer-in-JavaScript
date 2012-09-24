@@ -16,8 +16,39 @@ function OnScriptLoaded()
         OnAllScriptsLoaded()
 }
 
+function $(id)
+{
+    return document.getElementById(id)
+}
+
+function $$(field, def)
+{
+    var x = parseInt($(field).value)
+    x = isFinite(x) && x > 0 ? x : def
+    $(field).value = x
+    return x
+}
+
+function timems()
+{
+    return (new Date()).getTime()
+}
+
+function GetSelectedSceneName()
+{
+    return $('scene').options[$('scene').selectedIndex].text
+}
+
+function CreateSelectedScene()
+{
+    var name = GetSelectedSceneName()
+    return scenes[name]()
+}
+
 function OnAllScriptsLoaded()
 {
+    unittests.run()
+
     map = {}
 
     map.canvas = null
@@ -28,7 +59,7 @@ function OnAllScriptsLoaded()
 
     map.aarays = 1
 
-    map.cellSize = 150
+    map.cellSize = $$('cellsize')
 
     map.grid = []
 
@@ -46,11 +77,6 @@ function OnAllScriptsLoaded()
         cells:      []
     }
 
-    function $(id)
-    {
-        return document.getElementById(id)
-    }
-
     function disable(f)
     {
         $('render').disabled = f
@@ -60,7 +86,7 @@ function OnAllScriptsLoaded()
 
     map.time = function()
     {
-        return (new Date()).getTime()
+        return timems()
     }
 
     map.setsize = function(size)
@@ -140,8 +166,6 @@ function OnAllScriptsLoaded()
     {
         var cell = map.state.cells[thread.iCell]
 
-        map.HighlightCell(cell.row, cell.col, map.activeColor)
-
         var xmin = cell.col * map.cellSize
         var ymin = cell.row * map.cellSize
 
@@ -184,6 +208,8 @@ function OnAllScriptsLoaded()
             settings: {
                 aarays:    map.aarays
             },
+
+            photons: map.photons,
 
             // Ideally, this should be sent as a separate message
             // to the renderer task, because this would allow to
@@ -268,11 +294,13 @@ function OnAllScriptsLoaded()
         map.context.fillText(rps + ' RPS', 10, 5)
         disable(false)
 
-        console.log(map.width + 'x' + map.height + ' rendered for ' + duration + 'ms')
+        console.log(map.settings.sSceneName + ' rendered for ' + duration + 'ms')
         console.log('Rays traced: ' + map.totalrays)
 
         if (map.maxgrad)
             console.log('maxgrad=' + map.maxgrad)
+
+        //if (map.photons) DrawPhotons(map.photons)
     }
 
     map.CopyImageData = function(area, rgba)
@@ -332,29 +360,11 @@ function OnAllScriptsLoaded()
         }
     }
 
-    function GetSelectedSceneName()
-    {
-        return $('scene').options[$('scene').selectedIndex].text
-    }
-
-    function CreateSelectedScene()
-    {
-        var name = GetSelectedSceneName()
-        return scenes[name]()
-    }
-
     $('render').onclick = function()
     {
         disable(true)
 
-        var $$ = function(field, def)
-        {
-            var x = parseInt($(field).value)
-            x = isFinite(x) && x > 0 ? x : def
-            $(field).value = x
-            return x
-        }
-
+        map.settings = GetUIChoosenSettings()
         map.scene = CreateSelectedScene()
 
         map.aarays = $$('aarays')
@@ -362,8 +372,25 @@ function OnAllScriptsLoaded()
         map.cellSize = $$('cellsize')
         map.setsize($$('imgsize'), $$('imgsize'))
         map.clear()
-    
-        map.Render()
+        map.photons = []
+
+        if (!map.settings.fGI)
+            map.Render()
+        else
+            GetPhotonMap
+            ({
+                scenename:  GetSelectedSceneName(),
+                numphotons: 20000,
+                numworkers: GetNumWorkers(),
+                onready:    function(photons)
+                {
+                    DrawPhotons(photons)
+                    PreparePhotonsForTransfer(photons)
+                    console.log('photons: ', photons)
+                    map.photons = photons
+                    map.Render()
+                }
+            })
     }
 
     $('image').onclick = function()
@@ -374,6 +401,8 @@ function OnAllScriptsLoaded()
     $('canvas').onclick = function(event)
     {
         var rt = new raytracer({scene:CreateSelectedScene()})
+        if (map.photons) rt.photons = map.photons
+
         var s = new screen
         ({
             width:      $('canvas').width,
@@ -384,15 +413,141 @@ function OnAllScriptsLoaded()
 
         var x = event.x
         var y = event.y
-
         var c = s.raycolor(x, y, 1)
         console.log('(' + x + ',' + y + ')=[' + c + ']')
 
-        var r = rt.scene.camera.ray(x/s.width, y/s.height)
-        r.power = 1
-        rt.emit(r)
-        console.log('photos created: ' + rt.photonmap.length)
+        var r = new ray({from:s.rt.scene.camera.eye, to:[0, 0, 0], power:1})
+        s.rt.emit(r)
     }
 
     initialize()
+}
+
+function GetUIChoosenSettings()
+{
+    return {
+        nWorkers:   $$('nthreads'),
+        fGI:        $('GI').checked,
+        nAARays:    $$('aarays'),
+        nImgSize:   $$('imgsize'),
+        nCellSize:  $$('cellsize'),
+        tSceneName: $('scene').options[$('scene').selectedIndex].text
+    }
+}
+
+function GetNumWorkers()
+{
+    return $$('nthreads')
+}
+
+function GetPhotonMap(args)
+{
+    var scenename   = args.scenename
+    var numphotons  = args.numphotons
+    var onready     = args.onready
+    var numworkers  = args.numworkers
+
+    var nactiveworkers = numworkers
+    var photonarrays = []
+
+    var OnWorkerReady = function(event)
+    {
+        event.target.terminate()
+
+        photonarrays.push(event.data.photons)
+        nactiveworkers--
+
+        if (nactiveworkers < 0)
+            throw "a worker is unexpectedly active"
+
+        if (nactiveworkers == 0)
+        {
+            var photons = [].concat.apply([], photonarrays)
+            onready(photons)
+        }
+    }
+
+    for (var i = 0; i < numworkers; i++)
+    {
+        var t = new Worker('js/photonemitter.js')
+
+        t.onmessage = OnWorkerReady
+
+        t.postMessage
+        ({
+            scenename:  scenename,
+            numphotons: Math.ceil(numphotons/numworkers)
+        })
+    }
+}
+
+function DrawPhotons(photons)
+{
+    var scene = CreateSelectedScene()
+    var cam = scene.camera
+    var scr = new plane
+    ({
+        center: cam.lt,
+        norm:   vec.cross(cam.right, cam.down)
+    })
+
+    var width = $('canvas').width
+    var height = $('canvas').height
+
+    var ctx = $('canvas').getContext('2d')
+    var img = ctx.getImageData(0, 0, width, height)
+    var pixels = img.data
+
+    for (var i = 0; i < photons.length; i++)
+    {
+        var r = new ray
+        ({
+            from:   cam.eye,
+            to:     photons[i].from
+        })
+
+        var h = scr.trace(r)
+        if (!h) continue
+
+        var p = vec.sub(h.at, cam.lt)
+        var pr = vec.dot(p, cam.right)
+        var pd = vec.dot(p, cam.down)
+        var x = Math.floor(pr/vec.sqrlen(cam.right)*width)
+        var y = Math.floor(pd/vec.sqrlen(cam.down)*height)
+
+        if (x >= 0 && x < width && y >= 0 && y < height)
+        {
+            var b = (y*width + x)*4
+
+            pixels[b + 0] = 255
+            pixels[b + 1] = 255
+            pixels[b + 2] = 255
+            pixels[b + 3] = 255
+        }
+    }
+
+    ctx.putImageData(img, 0, 0)
+}
+
+function PreparePhotonsForTransfer(photons)
+{
+    var round = function(f, x)
+    {
+        return Math.round(f*x)/x
+    }
+
+    var roundv = function(v, x)
+    {
+        v[0] = round(v[0], x)
+        v[1] = round(v[1], x)
+        v[2] = round(v[2], x)
+    }
+
+    for (var i = 0; i < photons.length; i++)
+    {
+        var pi = photons[i]
+        pi.power = round(pi.power, 1e10)
+        roundv(pi.from, 1e3)
+        roundv(pi.dir, 1e3)
+    }
 }

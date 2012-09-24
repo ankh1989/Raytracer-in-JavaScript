@@ -28,6 +28,7 @@ function ReadRenderSettings(data)
 
     var scene = scenes[data.scenename]()
     self.rt = new raytracer({scene:scene})
+    self.rt.photons = data.photons
 
     self.screen = new screen
     ({

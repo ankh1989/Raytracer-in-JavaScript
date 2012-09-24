@@ -8,6 +8,7 @@ function LoadScripts(load)
         'math/vector.js',
         'math/m3x3.js',
         'math/transform.js',
+        'math/kdtree.js',
 
         'shapes/bounded.js',
         'shapes/transformed.js',
@@ -34,6 +35,9 @@ function LoadScripts(load)
         'screen.js',
         'shaders.js',
         'rpoint.js',
+
+        'unittests.js',
+        'perftests.js',
     ]
 
     for (var i = 0; i < pathes.length; i++)
