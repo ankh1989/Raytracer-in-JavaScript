@@ -190,7 +190,7 @@ function OnAllScriptsLoaded()
 
     map.LaunchRenderer = function(area, thread)
     {
-        var renderer = new Worker('js/renderer.js')
+        var renderer = new Worker('js/worker.js')
 
         renderer.area       = area
         renderer.id         = thread.id
@@ -199,65 +199,73 @@ function OnAllScriptsLoaded()
 
         renderer.postMessage
         ({
-            scenename: GetSelectedSceneName(),
+            func: map.RenderArea + '',
+            args:
+            [{
+                scenename:  GetSelectedSceneName(),
+                photons:    map.photons,
+                area:       area,
 
-            screen: {
-                width:     map.width,
-                height:    map.height,
-            },
+                screen: {
+                    width:     map.width,
+                    height:    map.height,
+                },
 
-            settings: {
-                aarays:    map.aarays
-            },
-
-            photons: map.photons,
-
-            // Ideally, this should be sent as a separate message
-            // to the renderer task, because this would allow to
-            // reuse the same task again and avoid costly initialization
-            // (loading external scripts, etc.).
-            area: area
+                settings: {
+                    aarays:    map.aarays
+                }
+            }]
         })
+    }
+
+    // This function runs on a separate thread.
+    map.RenderArea = function(args)
+    {
+        var area = args.area
+        var scene = scenes[args.scenename]()
+        var rt = new raytracer({scene:scene})
+        var scr = new screen
+        ({
+            width:      args.screen.width,
+            height:     args.screen.height,
+            aarays:     args.settings.aarays,
+            raytracer:  rt
+        })
+
+        rt.photons = args.photons
+
+        var rgba = scr.renderarea(
+            [area.xmin, area.xmax],
+            [area.ymin, area.ymax])
+
+        return {
+            rgba:       rgba,
+            maxgrad:    math.findroot.maxgrad,
+            totalrays:  rt.totalrays
+        }
     }
 
     map.OnRendererMessage = function(event)
     {
-        var log = function(text)
-        {
-            if (console && console.log)
-                console.log(event.target.id + '> ' + text)
-        }
+        var result = event.data.result
 
-        if (typeof event.data == 'string')
-            log(event.data)
-        if (typeof event.data == 'object')
-        {
-            if (event.data.rgba)
-                map.OnRendererFinished(event)
-            if (event.data.maxgrad)
-                map.OnMaxGradUpdated(event)
-            if (event.data.totalrays)
-                map.OnTotalRaysUpdated(event.data.totalrays)
-        }
-        else
-            log("unknown event from " + event.target.id)
+        map.OnMaxGradUpdated(result.maxgrad)
+        map.OnTotalRaysUpdated(result.totalrays)
+        map.OnRendererFinished(event.target, result.rgba)
     }
 
-    map.OnRendererFinished = function(event)
+    map.OnRendererFinished = function(task, rgba)
     {
-        var task = event.target
-
         task.terminate()
-
-        map.CopyImageData(task.area, event.data.rgba)
+        map.CopyImageData(task.area, rgba)
         map.OnCellRendered(task.thread)
     }
 
-    map.OnMaxGradUpdated = function(event)
+    map.OnMaxGradUpdated = function(maxgrad)
     {
         map.maxgrad = map.maxgrad || 0.0
-        if (event.data.maxgrad > map.maxgrad)
-            map.maxgrad = event.data.maxgrad
+        if (maxgrad > map.maxgrad)
+            map.maxgrad = maxgrad
     }
 
     map.OnTotalRaysUpdated = function(n)
