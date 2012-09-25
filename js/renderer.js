@@ -36,14 +36,12 @@ Renderer.prototype =
             this.Render()
         else
         {
-            var r = this
-
             this.GetPhotonMap
             ({
                 scenename:  this.scenename,
                 numphotons: this.numphotons,
                 numworkers: this.nthreads,
-                onready:    function(photons){r.OnPhotonsCreated(photons)}
+                onready:    this.OnPhotonsCreated.bind(this)
             })
         }
     },
@@ -225,10 +223,9 @@ Renderer.prototype =
 
     LaunchRenderer: function(area, thread)
     {
-        var r = this
         var w = new worker
         ({
-            oncompleted:    function(args){r.OnRendererCompleted(args)},
+            oncompleted:    this.OnRendererCompleted.bind(this),
             func:           this.RenderArea,
             args:
             [{

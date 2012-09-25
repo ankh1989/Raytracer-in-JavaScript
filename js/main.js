@@ -49,9 +49,9 @@ function Render()
         GI:                 s.fGI,
         scenename:          s.tSceneName,
         numphotons:         1e5,
-        onarearendering:    HighlightArea,
-        onarearendered:     CopyImageData,
-        oncompleted:        OnImageRendered
+        onarearendering:    HighlightArea.bind(this),
+        onarearendered:     CopyImageData.bind(this),
+        oncompleted:        OnImageRendered.bind(this)
     })
 
     r.Run()
