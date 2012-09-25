@@ -16,75 +16,20 @@ function OnScriptLoaded()
         OnAllScriptsLoaded()
 }
 
-function $(id)
-{
-    return document.getElementById(id)
-}
-
-function $$(field)
-{
-    return parseInt($(field).value)
-}
-
-function GetUIChoosenSettings()
-{
-    return {
-        nWorkers:   $$('nthreads'),
-        fGI:        $('GI').checked,
-        nAARays:    $$('aarays'),
-        nImgSize:   $$('imgsize'),
-        nCellSize:  $$('cellsize'),
-        tSceneName: $('scene').options[$('scene').selectedIndex].text
-    }
-}
-
-function CloneImage()
-{
-    $('img').width = $('canvas').width
-    $('img').height = $('canvas').height
-    $('img').src = $('canvas').toDataURL()
-    $('img').style.visibility = 'visible'
-}
-
-function ResizeCanvas()
-{
-    var s = GetUIChoosenSettings()
-    var n = s.nImgSize
-
-    if ($('canvas').width != n)
-        $('canvas').width = n
-
-    if ($('canvas').height != n)
-        $('canvas').height = n
-}
-
-function ListScenes()
-{
-    for (var name in scenes)
-    {
-        var item = document.createElement('option')
-        item.text = name
-        $('scene').appendChild(item)
-    }
-}
-
-function Enable()
-{
-    $('render').disabled = false
-}
-
-function Disable()
-{
-    $('render').disabled = true
-}
-
 function OnAllScriptsLoaded()
 {
     ListScenes()
     ResizeCanvas()
 
-    if (!unittests.run())
+    
+    try
+    {
+        UnitTests.RunAll()
+    }
+    catch(e)
+    {
         $('uterror').style.visibility = 'visible'
+    }
 }
 
 function Render()
@@ -146,4 +91,66 @@ function OnImageRendered(args)
         Rays:       args.totalrays,
         Duration:   args.duration
     })
+}
+
+function $(id)
+{
+    return document.getElementById(id)
+}
+
+function $$(field)
+{
+    return parseInt($(field).value)
+}
+
+function GetUIChoosenSettings()
+{
+    return {
+        nWorkers:   $$('nthreads'),
+        fGI:        $('GI').checked,
+        nAARays:    $$('aarays'),
+        nImgSize:   $$('imgsize'),
+        nCellSize:  $$('cellsize'),
+        tSceneName: $('scene').options[$('scene').selectedIndex].text
+    }
+}
+
+function CloneImage()
+{
+    $('img').width = $('canvas').width
+    $('img').height = $('canvas').height
+    $('img').src = $('canvas').toDataURL()
+    $('img').style.visibility = 'visible'
+}
+
+function ResizeCanvas()
+{
+    var s = GetUIChoosenSettings()
+    var n = s.nImgSize
+
+    if ($('canvas').width != n)
+        $('canvas').width = n
+
+    if ($('canvas').height != n)
+        $('canvas').height = n
+}
+
+function ListScenes()
+{
+    for (var name in scenes)
+    {
+        var item = document.createElement('option')
+        item.text = name
+        $('scene').appendChild(item)
+    }
+}
+
+function Enable()
+{
+    $('render').disabled = false
+}
+
+function Disable()
+{
+    $('render').disabled = true
 }
