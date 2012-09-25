@@ -389,7 +389,7 @@ function OnAllScriptsLoaded()
             GetPhotonMap
             ({
                 scenename:  GetSelectedSceneName(),
-                numphotons: 2000000,
+                numphotons: 100000,
                 numworkers: GetNumWorkers(),
                 onready:    function(photons)
                 {
@@ -457,34 +457,55 @@ function GetPhotonMap(args)
     var numphotons  = args.numphotons
     var onready     = args.onready
     var numworkers  = args.numworkers
+    var nlevels     = args.levels || 3
 
     var nactiveworkers = numworkers
     var photonarrays = []
 
-    var GeneratePhotons = function(scenename, numphotons)
+    var GeneratePhotons = function(scenename, numphotons, nlevels)
     {
         var scene = scenes[scenename]()
         var rt = new raytracer({scene:scene})
+        var em = new emitter({obj:rt.obj})
 
+        var sumlight = 0
         for (var i in rt.scene.lights)
+            sumlight += rt.scene.lights[i].power
+
+        var photons = []
+        var nphotons = 0
+
+        while (nphotons < numphotons)
         {
-            var light = rt.scene.lights[i]
-            if (!light.power) continue
+            var rays = []
 
-            for (var n = 0; n < numphotons; n++)
+            for (var i in rt.scene.lights)
             {
-                var r = new ray
-                ({
-                    from:   light.at,
-                    dir:    vec.randomdir(),
-                    power:  light.power/numphotons
-                })
+                var light = rt.scene.lights[i]
+                var count = Math.ceil(numphotons*light.power/sumlight)
 
-                rt.emit(r)
+                for (var n = 0; n < count; n++)
+                    rays.push(new ray
+                    ({
+                        from:   light.at,
+                        dir:    vec.randomdir(),
+                        power:  light.power/count
+                    }))
+            }
+
+            for (var i = 0; i < nlevels; i++)
+                rays = em.emit(rays)
+
+            for (var i = 1; i < em.levels.length; i++)
+            {
+                var level = em.levels[i]
+                photons.push(level)
+                nphotons += level.length
             }
         }
 
-        return rt.photons
+        photons = [].concat.apply([], photons)
+        return photons
     }
 
     var OnWorkerReady = function(event)
@@ -513,7 +534,7 @@ function GetPhotonMap(args)
         t.postMessage
         ({
             func: GeneratePhotons + '',
-            args: [scenename, Math.ceil(numphotons/numworkers)]
+            args: [scenename, Math.ceil(numphotons/numworkers), nlevels]
         })
     }
 }

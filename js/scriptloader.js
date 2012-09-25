@@ -27,6 +27,7 @@ function LoadScripts(load)
         'ray.js',
         'debug.js',
         'raytracer.js',
+        'emitter.js',
         'scene.js',
         'scenes.js',
         'material.js',
