@@ -22,7 +22,8 @@ function LoadScripts(load)
         'shapes/csg.js',
         'shapes/cubecyl.js',
         'shapes/dodecahedron.js',
-        
+
+        'renderer.js',
         'worker.js',
         'object.js',
         'ray.js',

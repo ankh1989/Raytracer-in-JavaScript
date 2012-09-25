@@ -17,12 +17,13 @@ emitter.prototype.emit = function(rays)
         var h = this.obj.trace(r)
         if (!h) continue
 
-        photons.push(new ray
-        ({
-            from:   h.at,
-            dir:    r.dir,
-            power:  r.power
-        }))
+        if (h.owner.material.diffuse > 0)
+            photons.push(new ray
+            ({
+                from:   h.at,
+                dir:    r.dir,
+                power:  r.power
+            }))
 
         var p = this.emitphoton(r, h)
         if (p) newrays.push(p)

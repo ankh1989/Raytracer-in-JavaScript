@@ -14,12 +14,12 @@
     </canvas>
 
     <div class="cp">
-        <input id="render" type="button" value="Render"/>
+        <input id="render" type="button" value="Render" onclick="Render()"/>
         <input id="aarays" type="text" value="1" size="5" title="Rays per pixel"/>
         <input id="imgsize" type="text" value="600" size="5" title="Image size"/>
         <input id="nthreads" type="text" value="4" size="5" title="Number of threads"/>
         <input id="cellsize" type="text" value="300" size="5" title="Cell size"/>
-        <input id="image" type="button" value="Copy"/>
+        <input id="image" type="button" value="Copy" onclick="CloneImage()"/>
         <select id='scene'></select>
         <input type="checkbox" id="GI" />Global Illumination
         <input type="button" value="Run Perf Tests" onclick="perftests.runall()"/>
