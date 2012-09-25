@@ -23,6 +23,7 @@ function LoadScripts(load)
         'shapes/cubecyl.js',
         'shapes/dodecahedron.js',
         
+        'worker.js',
         'object.js',
         'ray.js',
         'debug.js',

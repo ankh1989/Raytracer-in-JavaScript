@@ -1,8 +1,28 @@
-// This script is run as a worker thread.
-//
-// 1. It receives a message with the string representation of a function.
-// 2. It compiles this function and executes it.
-// 3. The value returned by the function is sent back to the main thread.
+function worker(args)
+{
+    this.func = args.func
+    this.args = args.args
+    this.oncompleted = args.oncompleted
+}
+
+worker.prototype.run = function()
+{
+    var w = this
+    var t = new Worker('js/worker.js')
+
+    t.onmessage = function(event)
+    {
+        t.terminate()
+        event.data.worker = w
+        w.oncompleted(event.data)
+    }
+
+    t.postMessage
+    ({
+        func: this.func + '',
+        args: this.args
+    })
+}
 
 onmessage = function(event)
 {
@@ -18,9 +38,7 @@ onmessage = function(event)
 
     postMessage
     ({
-        result:     r,
-        start:      t0,
-        finish:     t1,
-        duration:   t1 - t0
+        result: r,
+        duration: t1 - t0
     })
 }

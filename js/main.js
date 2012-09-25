@@ -190,16 +190,10 @@ function OnAllScriptsLoaded()
 
     map.LaunchRenderer = function(area, thread)
     {
-        var renderer = new Worker('js/worker.js')
-
-        renderer.area       = area
-        renderer.id         = thread.id
-        renderer.thread     = thread
-        renderer.onmessage  = map.OnRendererMessage
-
-        renderer.postMessage
+        var renderer = new worker
         ({
-            func: map.RenderArea + '',
+            oncompleted: map.OnRendererMessage,
+            func: map.RenderArea,
             args:
             [{
                 scenename:  GetSelectedSceneName(),
@@ -216,6 +210,12 @@ function OnAllScriptsLoaded()
                 }
             }]
         })
+
+        renderer.area       = area
+        renderer.id         = thread.id
+        renderer.thread     = thread
+
+        renderer.run()
     }
 
     // This function runs on a separate thread.
@@ -245,20 +245,17 @@ function OnAllScriptsLoaded()
         }
     }
 
-    map.OnRendererMessage = function(event)
+    map.OnRendererMessage = function(data)
     {
-        var result = event.data.result
-
-        map.OnMaxGradUpdated(result.maxgrad)
-        map.OnTotalRaysUpdated(result.totalrays)
-        map.OnRendererFinished(event.target, result.rgba)
+        map.OnMaxGradUpdated(data.result.maxgrad)
+        map.OnTotalRaysUpdated(data.result.totalrays)
+        map.OnRendererFinished(data)
     }
 
-    map.OnRendererFinished = function(task, rgba)
+    map.OnRendererFinished = function(data)
     {
-        task.terminate()
-        map.CopyImageData(task.area, rgba)
-        map.OnCellRendered(task.thread)
+        map.CopyImageData(data.worker.area, data.result.rgba)
+        map.OnCellRendered(data.worker.thread)
     }
 
     map.OnMaxGradUpdated = function(maxgrad)
@@ -305,11 +302,6 @@ function OnAllScriptsLoaded()
 
         console.log(map.settings.sSceneName + ' rendered for ' + duration + 'ms')
         console.log('Rays traced: ' + map.totalrays)
-
-        if (map.maxgrad)
-            console.log('maxgrad=' + map.maxgrad)
-
-        //if (map.photons) DrawPhotons(map.photons)
     }
 
     map.CopyImageData = function(area, rgba)
@@ -457,7 +449,7 @@ function GetPhotonMap(args)
     var numphotons  = args.numphotons
     var onready     = args.onready
     var numworkers  = args.numworkers
-    var nlevels     = args.levels || 3
+    var nlevels     = args.levels || 4
 
     var nactiveworkers = numworkers
     var photonarrays = []
@@ -508,34 +500,29 @@ function GetPhotonMap(args)
         return photons
     }
 
-    var OnWorkerReady = function(event)
-    {
-        event.target.terminate()
-
-        photonarrays.push(event.data.result)
-        nactiveworkers--
-
-        if (nactiveworkers < 0)
-            throw "a worker is unexpectedly active"
-
-        if (nactiveworkers == 0)
-        {
-            var photons = [].concat.apply([], photonarrays)
-            onready(photons)
-        }
-    }
-
     for (var i = 0; i < numworkers; i++)
     {
-        var t = new Worker('js/worker.js')
-
-        t.onmessage = OnWorkerReady
-
-        t.postMessage
+        var w = new worker
         ({
-            func: GeneratePhotons + '',
-            args: [scenename, Math.ceil(numphotons/numworkers), nlevels]
+            func: GeneratePhotons,
+            args: [scenename, Math.ceil(numphotons/numworkers), nlevels],
+            oncompleted: function(data)
+            {
+                photonarrays.push(data.result)
+                nactiveworkers--
+
+                if (nactiveworkers < 0)
+                    throw "a worker is unexpectedly active"
+
+                if (nactiveworkers == 0)
+                {
+                    var photons = [].concat.apply([], photonarrays)
+                    onready(photons)
+                }
+            }
         })
+
+        w.run()
     }
 }
 
