@@ -39,7 +39,7 @@ plane.prototype.trace = function(r)
 function axisplane(settings)
 {
     this.p = settings.center || settings.p || vec.all(0)
-    this.axis = settings.axis || settings.n || 2
+    this.axis = settings.axis || settings.n
     this.n = vec.e(this.axis)
     this.paxis = this.p[this.axis]
 }

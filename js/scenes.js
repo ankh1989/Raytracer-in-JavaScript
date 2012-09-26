@@ -320,20 +320,47 @@ scenes =
         var eye = m.vmul([0, 0, 5])
 
         var cam = new camera({
-            from:   [4, 5, 6],
-            to:     [0, 0, 0],
+            from:   [10, 6, 7],
+            to:     [2, 2, 3],
             w:      1,
             h:      1
         })
 
-        var lights = [
-            {at:[-50, 90, 160], power:3e5},
+        var lights =
+        [
+            {at:[50, 90, 160], power:8e5},
         ]
+
+        var base = new object
+        ({
+            material: new material('glass'),
+            shape: new cylinder
+            ({
+                center1: [3, 3, 0],
+                center2: [3, 3, 3],
+                radius: 1
+            })
+        })
 
         var flake = new object
         ({
-            shape: new sphereflake({n:4}),
-            material: new material([1, 1, 1])
+            material: new material('glass'),
+            shape: new transformed
+            ({
+                shape: new sphereflake({n:5}),
+                transform: new transform([3, 3, 4])
+            })
+        })
+
+        var walls = new object
+        ({
+            material: new material({color:new textures.checker({size:0.5})}),
+            shape: new group
+            ([
+                new axisplane({n:0}),
+                new axisplane({n:1}),
+                new axisplane({n:2}),
+            ])
         })
 
         var floor = new object
@@ -345,7 +372,7 @@ scenes =
         return new scene
         ({
             lights:     lights,
-            objects:    [flake, floor],
+            objects:    [flake, base, walls],
             camera:     cam
         })
     },
