@@ -10,14 +10,14 @@ function dodecahedron(settings)
 
     var spheres = []
 
-    for (var i in vertices)
+    for (var i = 0; i < vertices.length; i++)
         spheres.push(new sphere({center:vertices[i], radius:sphr}))
 
     var cylinders = []
     var neighbors = dodecahedron.getneighbors(vertices)
 
-    for (var i in neighbors)
-    for (var j in neighbors[i])
+    for (var i = 0; i < neighbors.length; i++)
+    for (var j = 0; j < neighbors[i].length; j++)
     {
         var ci = vertices[i]
         var cj = vertices[neighbors[i][j]]
