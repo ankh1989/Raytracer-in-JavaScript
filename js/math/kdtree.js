@@ -2,6 +2,11 @@
 // T(n) = O(k*n*log(n))
 function kdtree(objects, getp)
 {
+    /*
+    for (var i = 0; i < objects.length; i++)
+        objects[i].$index = i + 1
+        */
+
     var dims = getp(objects[0]).length
 
     // constructs a balanced tree assuming, that
@@ -59,6 +64,8 @@ function kdtree(objects, getp)
         this.value  = median
         this.split  = splitted
         this.getp   = getp
+
+        //this.verify()
     }
 
     // getp(sorted[axis][i])[axis] is sorted by i for each axis
@@ -75,6 +82,28 @@ function kdtree(objects, getp)
 
     tree.prototype = kdtree.prototype
     return new tree(sorted, 0)
+}
+
+// verifies itself and throws an exception if the tree is incorrect
+kdtree.prototype.verify = function()
+{
+    var visited = {}
+
+    this.each(function(obj)
+    {
+        var i = obj.$index
+        if (visited[i])
+            throw "already visited"
+        visited[i] = true
+    })
+}
+
+kdtree.prototype.each = function(f)
+{
+    if (this.split) this.split.each(f)
+    if (this.objects) this.objects.each(f)
+    if (this.left) this.left.each(f)
+    if (this.right) this.right.each(f)
 }
 
 // Returns all objects within the {min, max} box.
@@ -184,7 +213,7 @@ kdtree.prototype.search = function(p, k, getdist)
     }
 
     search(this)
-    
+
     var result = [].fill(neighbors.length, function(i)
     {
         return neighbors[i].obj

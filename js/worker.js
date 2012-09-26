@@ -3,17 +3,17 @@ function worker(args)
     this.func = args.func
     this.args = args.args
     this.oncompleted = args.oncompleted
+    this.multithreading = true
 }
 
 worker.prototype.run = function()
 {
-    /*
-    return this.oncompleted
-    ({
-        worker: this,
-        result: this.func.apply(null, this.args)
-    })
-    */
+    if (!this.multithreading)
+        return this.oncompleted
+        ({
+            worker: this,
+            result: this.func.apply(null, this.args)
+        })
 
     var w = this
     var t = new Worker('js/worker.js')

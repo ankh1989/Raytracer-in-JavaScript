@@ -52,7 +52,7 @@ Renderer.prototype =
         var numphotons  = args.numphotons
         var onready     = args.onready
         var numworkers  = args.numworkers
-        var nlevels     = args.levels || 4
+        var nlevels     = args.levels || 10
 
         var nactiveworkers = numworkers
         var photonarrays = []
@@ -87,18 +87,19 @@ Renderer.prototype =
     GeneratePhotons: function(scenename, numphotons, nlevels)
     {
         var scene = scenes[scenename]()
-        var rt = new raytracer({scene:scene})
-        var em = new emitter({obj:rt.obj})
 
         var sumlight = 0
-        for (var i = 0; i < rt.scene.lights.length; i++)
-            sumlight += rt.scene.lights[i].power
+        for (var i = 0; i < scene.lights.length; i++)
+            sumlight += scene.lights[i].power
 
         var photons = []
         var nphotons = 0
 
-        while (nphotons < numphotons)
+        //while (nphotons < numphotons)
         {
+            var rt = new raytracer({scene:scene})
+            var em = new emitter({obj:rt.obj})
+
             var rays = []
 
             for (var i = 0; i < rt.scene.lights.length; i++)
@@ -118,7 +119,7 @@ Renderer.prototype =
             for (var i = 0; i < nlevels; i++)
                 rays = em.emit(rays)
 
-            for (var i = 1; i < em.levels.length; i++)
+            for (var i = 0; i < em.levels.length; i++)
             {
                 var level = em.levels[i]
                 photons.push(level)
@@ -127,6 +128,7 @@ Renderer.prototype =
         }
 
         photons = [].concat.apply([], photons)
+        Renderer.prototype.PreparePhotonsForTransfer(photons)
         return photons
     },
 
@@ -138,6 +140,7 @@ Renderer.prototype =
         //TestTrace(photons)
         console.log('photons: ', photons)
         this.photons = photons
+        //return this.oncompleted({duration:1,totalrays:0})
         this.Render()
     },
 

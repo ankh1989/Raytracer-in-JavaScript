@@ -55,6 +55,8 @@ function Render()
     })
 
     r.Run()
+
+    $renderer = r
 }
 
 function HighlightArea(area)
@@ -153,4 +155,27 @@ function Enable()
 function Disable()
 {
     $('render').disabled = true
+}
+
+$('canvas').onclick = function(event)
+{
+    var x = event.x
+    var y = event.y
+
+    var settings = GetUIChoosenSettings()
+
+    var scene = scenes[settings.tSceneName]()
+
+    var rt = new raytracer({scene:scene})
+    rt.photons = $renderer.photons
+
+    var scr = new screen
+    ({
+        raytracer: rt,
+        width: settings.nImgSize,
+        height: settings.nImgSize
+    })
+
+    var color = scr.raycolor(x, y, 1)
+    console.log('color at ' + x + ':' + y, color)
 }

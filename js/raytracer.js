@@ -23,7 +23,7 @@ raytracer.prototype.trace = function(r)
 raytracer.prototype.color = function(r)
 {
     this.totalrays++
-    if (r.power < 1e-4) return [0, 0, 0]
+    if (r.power < 1e-2) return [0, 0, 0]
 
     var hit = this.trace(r)
     if (!hit) return this.scene.bgcolor
@@ -63,7 +63,7 @@ raytracer.prototype.diffuse = function(r, hit)
     var m = hit.owner.material
     if (!m.color) return
 
-    var lid = this.direct(r, hit)
+    var lid = [0, 0, 0]//this.direct(r, hit)
     var lii = this.indirect(r, hit)
 
     var li = vec.add(lid, lii)
@@ -131,7 +131,23 @@ raytracer.prototype.indirect = function(r, h)
             function(r) { return r.from })
     }
 
-    var photons = this.photonmap.search(h.at, 25, vec.dist)
+    /*
+    var nph
+
+    {
+        var index = 0
+        this.photons.each(function(ph)
+        {
+            ph.index = index++
+            ph.dist = vec.dist(h.at, ph.from)
+
+            if (!nph || ph.dist < nph.dist)
+                nph = ph
+        })
+    }
+    */
+
+    var photons = this.photonmap.search(h.at, 7, vec.sqrdist)
     if (photons.length == 0)
         return [0, 0, 0]
 
@@ -153,8 +169,9 @@ raytracer.prototype.indirect = function(r, h)
         li += rpli*pi.power
     }
 
-    var r2 = vec.sqrdist(photons[photons.length - 1].from, r.from)
+    var r2 = vec.sqrdist(photons[photons.length - 1].from, h.at)
     li /= (Math.PI*r2)
+    //li /= 100
     return [li, li, li]
 }
 

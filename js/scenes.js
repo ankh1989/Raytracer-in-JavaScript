@@ -664,9 +664,11 @@ scenes =
             )
         })
 
+        var tc = new textures.checker({size:2})
+
         var floor = new object
         ({
-            material:   new material([0.5, 0.5, 0.5]),
+            material:   new material({color:[1, 1, 1]}),
             shape:      new axisplane({axis:2, center:[0, 0, 0]})
         })
 
@@ -680,12 +682,12 @@ scenes =
 
         return new scene
         ({
-            objects: [sph, floor],
+            objects: [floor],
             camera: cam,
             //bgcolor: [0.5, 0.5, 1.0],
             lights:
             [
-                {power:3e3, at:[-5, 5, 5]}
+                {power:1000, at:[-5, 5, 5]}
             ]
         })
     }
