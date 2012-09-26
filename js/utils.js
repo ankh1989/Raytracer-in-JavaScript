@@ -12,3 +12,19 @@ function time()
 {
     return (new Date()).getTime()
 }
+
+Array.prototype.fill = function(n, get)
+{
+    for (var i = 0; i < n; i++)
+        this[i] = get(i)
+
+    return this
+}
+
+Array.prototype.each = function(f)
+{
+    for (var i = 0; i < this.length; i++)
+        f(this[i])
+
+    return this
+}

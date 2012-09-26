@@ -113,3 +113,82 @@ kdtree.prototype.select = function(min, max)
 
     return results
 }
+
+// k-NN algorithm: it searches k nearest neighbors to point p
+// and uses getdist to measure distance between two points
+kdtree.prototype.search = function(p, k, getdist)
+{
+    var getp = this.getp
+
+    // neighbors[i].obj
+    // neighbors[i].dist
+    var neighbors = []
+
+    var getmaxdist = function()
+    {
+        var n = neighbors.length
+        if (n > 0) return neighbors[n - 1].dist
+    }
+
+    var insert = function(dist, obj)
+    {
+        var i = neighbors.length;
+        while (i > 0 && dist < neighbors[i - 1].dist)
+            i--
+
+        if (i == k) return
+
+        for (var j = neighbors.length; j > i; j--)
+            if (j < k) neighbors[j] = neighbors[j - 1]
+
+        neighbors[i] = {obj:obj, dist:dist}
+    }
+
+    var searchplain = function(objects)
+    {
+        objects.each(function(obj)
+        {
+            insert(getdist(p, getp(obj)), obj)
+        })
+    }
+
+    var search = function(t)
+    {
+        if (t.objects)
+        {
+            searchplain(t.objects)
+            return
+        }
+
+        var x = p[t.axis]
+        var dist = Math.abs(t.value - x)
+
+        if (x < t.value)
+        {
+            search(t.left)
+            if (neighbors.length < k || getmaxdist() > dist)
+            {
+                search(t.right)
+                searchplain(t.split)
+            }
+        }
+        else
+        {
+            search(t.right)
+            if (neighbors.length < k || getmaxdist() > dist)
+            {
+                search(t.left)
+                searchplain(t.split)
+            }
+        }
+    }
+
+    search(this)
+    
+    var result = [].fill(neighbors.length, function(i)
+    {
+        return neighbors[i].obj
+    })
+
+    return result
+}

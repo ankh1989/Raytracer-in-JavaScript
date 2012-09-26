@@ -52,7 +52,7 @@ var perftests =
 
 perftests.add('kd-tree build', function()
 {
-    var num = 1e6
+    var num = 5e5
 
     var objects = new Array(num)
     for (var i = 0; i < objects.length; i++)
@@ -63,7 +63,7 @@ perftests.add('kd-tree build', function()
     var randombox = function()
     {
         var min = vec.random()
-        var max = vec.addmul(min, 0.1, vec.random())
+        var max = vec.addmul(min, 0.15, vec.random())
 
         for (var i = 0; i < 3; i++)
         {
@@ -79,6 +79,8 @@ perftests.add('kd-tree build', function()
         return {min:min, max:max}
     }
 
+    // measure kdtree.select
+
     var t0 = this.time()
     var nselect = 1000
     var nsum = 0
@@ -90,9 +92,30 @@ perftests.add('kd-tree build', function()
         nsum += s.length
     }
 
-    this.log('average selection contains ' + Math.round(nsum/nselect) + ' items')
+    var avgselection = Math.round(nsum/nselect)
+    this.log('average selection contains ' + avgselection + ' items')
 
     var t1 = this.time()
     var speed = (t1 - t0)/1e3/nselect
     this.log('kdtree.select takes ' + Math.round(speed*1e6) + ' seconds per million calls')
+
+    // measure kdtree.search
+
+    var t0 = this.time()
+    var nsearch = 1000
+    var nsum = 0
+
+    for (var i = 0; i < nsearch; i++)
+    {
+        var p = vec.random()
+        var s = t.search(p, avgselection, math.infdist)
+        nsum += s.length
+    }
+
+    var avgsearch = Math.round(nsum/nsearch)
+    this.log('average search contains ' + avgsearch + ' items')
+
+    var t1 = this.time()
+    var speed = (t1 - t0)/1e3/nsearch
+    this.log('kdtree.search takes ' + Math.round(speed*1e6) + ' seconds per million calls')
 })

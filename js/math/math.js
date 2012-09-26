@@ -218,3 +218,13 @@ math.sortarray = function(a)
         function(i, j){math.swap(a, i, j)}
     )
 }
+
+math.infdist = function(p, q)
+{
+    var sum = 0
+
+    for (var i = 0; i < p.length; i++)
+        sum += Math.abs(p[i] - q[i])
+
+    return sum
+}

@@ -237,14 +237,14 @@ UnitTests.Add('kdtree', function()
 
         var set = {}
 
-        for (var i in list1)
+        for (var i = 0; i < list1.length; i++)
         {
             var ob = list1[i]
             $f(set[ob.i])
             set[ob.i] = true
         }
 
-        for (var i in list2)
+        for (var i = 0; i < list2.length; i++)
         {
             var ob = list2[i]
             $t(set[ob.i])
@@ -264,13 +264,11 @@ UnitTests.Add('kdtree', function()
     }
 
     var num = 100
-    var objects = new Array(num)
-    for (var i = 0; i < objects.length; i++)
-        objects[i] =
-        {
-            p: vec.random(),
-            i: i
-        }
+
+    var objects = [].fill(num, function(i)
+    {
+        return {i:i, p:vec.random()}
+    })
 
     checktree(objects)
 
@@ -279,4 +277,53 @@ UnitTests.Add('kdtree', function()
         objects[i] = {i:i, p:objects[i]}
 
     checktree(objects)
+})
+
+UnitTests.Add('kdtree.knn', function()
+{
+    $t = this.IsTrue.bind(this)
+
+    var numobj = 1000
+    var numtst = 100
+    var k = 25
+
+    var objects = [].fill(numobj, function(i)
+    {
+        return {i:i, p:vec.random()}
+    })
+
+    var t = new kdtree(objects, function(obj)
+    {
+        return obj.p
+    })
+
+    var search = function(p, k)
+    {
+        var list = objects.slice(0)
+
+        list.each(function(obj)
+        {
+            obj.d = math.infdist(p, obj.p)
+        })
+
+        list.sort(function(a, b)
+        {
+            return a.d - b.d
+        })
+
+        return list.slice(0, k)
+    }
+
+    for (var i = 0; i < numtst; i++)
+    {
+        var p = vec.random()
+        var nb = search(p, k)
+        var nbt = t.search(p, k, math.infdist)
+
+        $t(nb.length == Math.min(k, numobj), 'nb.length')
+        $t(nbt.length == nb.length, 'nbt.length')
+
+        for (var j = 0; j < nb.length; j++)
+            $t(nb[j].i == nbt[j].i, 'nb[i]')
+    }
 })
