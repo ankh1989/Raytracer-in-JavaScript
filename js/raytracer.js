@@ -131,14 +131,9 @@ raytracer.prototype.indirect = function(r, h)
             function(r) { return r.from })
     }
 
-    var p = h.at
-    var e = 0.05
-
-    var photons = this.photonmap.select
-    (
-        [p[0] - e, p[1] - e, p[2] - e],
-        [p[0] + e, p[1] + e, p[2] + e]
-    )
+    var photons = this.photonmap.search(h.at, 25, vec.dist)
+    if (photons.length == 0)
+        return [0, 0, 0]
 
     var m = h.owner.material
     var li = 0
@@ -158,8 +153,8 @@ raytracer.prototype.indirect = function(r, h)
         li += rpli*pi.power
     }
 
-    var s = 4*e*e
-    li /= s
+    var r2 = vec.sqrdist(photons[photons.length - 1].from, r.from)
+    li /= (Math.PI*r2)
     return [li, li, li]
 }
 

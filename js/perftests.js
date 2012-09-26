@@ -63,7 +63,7 @@ perftests.add('kd-tree build', function()
     var randombox = function()
     {
         var min = vec.random()
-        var max = vec.addmul(min, 0.15, vec.random())
+        var max = vec.addmul(min, 0.09, vec.random())
 
         for (var i = 0; i < 3; i++)
         {

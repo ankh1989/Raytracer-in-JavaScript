@@ -7,6 +7,14 @@ function worker(args)
 
 worker.prototype.run = function()
 {
+    /*
+    return this.oncompleted
+    ({
+        worker: this,
+        result: this.func.apply(null, this.args)
+    })
+    */
+
     var w = this
     var t = new Worker('js/worker.js')
 

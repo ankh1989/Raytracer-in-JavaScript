@@ -500,7 +500,7 @@ scenes =
         var centers = getcenters(5)
         var spheres = []
 
-        for (var i in centers)
+        for (var i = 0; i < centers.length; i++)
             spheres.push(newsphere(centers[i]))
 
         var center = vec.average.apply(null, centers)

@@ -91,7 +91,7 @@ Renderer.prototype =
         var em = new emitter({obj:rt.obj})
 
         var sumlight = 0
-        for (var i in rt.scene.lights)
+        for (var i = 0; i < rt.scene.lights.length; i++)
             sumlight += rt.scene.lights[i].power
 
         var photons = []
@@ -101,7 +101,7 @@ Renderer.prototype =
         {
             var rays = []
 
-            for (var i in rt.scene.lights)
+            for (var i = 0; i < rt.scene.lights.length; i++)
             {
                 var light = rt.scene.lights[i]
                 var count = Math.ceil(numphotons*light.power/sumlight)
@@ -177,7 +177,7 @@ Renderer.prototype =
 
     StartThreads: function()
     {
-        for (var i in this.state.threads)
+        for (var i = 0; i < this.state.threads.length; i++)
         {
             var t = this.state.threads[i]
             if (this.FindNotRenderedCell(t))
