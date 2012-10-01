@@ -52,7 +52,7 @@ Renderer.prototype =
         var numphotons  = args.numphotons
         var onready     = args.onready
         var numworkers  = args.numworkers
-        var nlevels     = args.levels || 10
+        var nlevels     = args.levels || 4
 
         var nactiveworkers = numworkers
         var photonarrays = []

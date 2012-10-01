@@ -20,7 +20,6 @@ worker.prototype.run = function()
 
     t.onmessage = function(event)
     {
-        t.terminate()
         event.data.worker = w
         w.oncompleted(event.data)
     }
@@ -49,4 +48,6 @@ onmessage = function(event)
         result: r,
         duration: t1 - t0
     })
+
+    close()
 }
